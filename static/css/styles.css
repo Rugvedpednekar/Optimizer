@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --canvas-bg: #07090F;
+  --surface-bg: #0C0F1A;
+  --accent-cyan: #38BDF8;
+  --text-primary: #F8FAFC;
+  --text-muted: #94A3B8;
+  --whisper-border: rgba(56, 189, 248, 0.15);
+  
+  --profit-green: #4ADE80;
+  --loss-red: #F87171;
+  --warn-amber: #FBBF24;
+
+  --font-display: 'Syne', sans-serif;
+  --font-data: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--canvas-bg);
+  color: var(--text-primary);
+  font-family: var(--font-data);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Headings */
+h1, h2, h3, .syne {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* Sidebar */
+.sidebar {
+  width: 230px;
+  background-color: var(--surface-bg);
+  border-right: 1px solid var(--whisper-border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  position: fixed;
+  height: 100vh;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--accent-cyan);
+  padding: 0 24px 32px 24px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.nav-link {
+  padding: 14px 24px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.05);
+  border-left: 3px solid var(--accent-cyan);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-left: 230px;
+  padding: 32px 48px;
+  max-width: 1400px;
+}
+
+/* Cards */
+.card {
+  background-color: var(--surface-bg);
+  border: 1px solid var(--whisper-border);
+  border-radius: 4px;
+  padding: 24px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.05);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+/* Grids */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat-label { color: var(--text-muted); font-size: 12px; margin-bottom: 8px;}
+.stat-value { font-size: 24px; font-weight: 700; }
+
+/* Tables */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--whisper-border);
+}
+
+.data-table th { color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
+.data-table tbody tr:hover { background: rgba(56, 189, 248, 0.02); }
+
+/* Animations & Badges */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.dot-buy { background-color: var(--profit-green); animation: pulseGlow 2s infinite; }
+.dot-sell { background-color: var(--loss-red); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.05);
+}
+
+.btn-cyan {
+  background: var(--accent-cyan);
+  color: var(--canvas-bg);
+  border: none;
+  padding: 12px 24px;
+  font-family: var(--font-data);
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: box-shadow 0.2s;
+}
+
+.btn-cyan:hover { box-shadow: 0 0 16px rgba(56, 189, 248, 0.4); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .main-content { margin-left: 0; padding: 16px; }
+}
+
+/* Stagger Fade Up */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-1 { animation: fadeUp 0.5s ease forwards; opacity: 0; animation-delay: 0.1s;}
+.stagger-2 { animation: fadeUp 0.5s ease forwards; opacity: 0; animation-delay: 0.2s;}
+.stagger-3 { animation: fadeUp 0.5s ease forwards; opacity: 0; animation-delay: 0.3s;}

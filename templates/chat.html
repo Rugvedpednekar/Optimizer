@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Optimizer - AI Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#9cf0ff", "tertiary-fixed-dim": "#ffb4aa", "on-tertiary-container": "#b60009", "primary-fixed-dim": "#00daf3", "on-secondary-fixed-variant": "#005300", "surface": "#111417", "surface-container": "#1d2023", "secondary-container": "#00c705", "surface-container-low": "#191c1f", "secondary": "#3ce42f", "on-surface-variant": "#bac9cc", "background": "#111417", "on-tertiary": "#690003", "on-tertiary-fixed": "#410001", "outline": "#849396", "error": "#ffb4ab", "tertiary": "#ffe8e4", "surface-container-high": "#272a2e", "inverse-surface": "#e1e2e7", "on-primary-fixed": "#001f24", "on-primary-fixed-variant": "#004f58", "on-background": "#e1e2e7", "error-container": "#93000a", "primary-container": "#00e5ff", "surface-bright": "#37393d", "inverse-primary": "#006875", "on-error-container": "#ffdad6", "on-tertiary-fixed-variant": "#930005", "on-error": "#690005", "surface-container-highest": "#323538", "surface-dim": "#111417", "tertiary-container": "#ffc2ba", "on-secondary": "#003a00", "on-surface": "#e1e2e7", "tertiary-fixed": "#ffdad5", "inverse-on-surface": "#2e3134", "secondary-fixed": "#77ff62", "primary": "#c3f5ff", "on-secondary-container": "#004b00", "outline-variant": "#3b494c", "surface-container-lowest": "#0b0e11", "on-primary-container": "#00626e", "on-secondary-fixed": "#002200", "surface-variant": "#323538", "surface-tint": "#00daf3", "secondary-fixed-dim": "#3ce42f", "on-primary": "#00363d"
+                    },
+                    "fontFamily": { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #111417; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .grid-pattern {
+            background-image: radial-gradient(rgba(132, 147, 150, 0.07) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+    </style>
+    <script src="/static/js/app.js"></script>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed-dim selection:text-on-primary-fixed h-screen overflow-hidden flex">
+
+<aside id="sidebar" class="transform -translate-x-full md:translate-x-0 transition-transform duration-200 absolute md:relative z-50 h-screen w-64 border-r border-outline-variant/10 bg-[#191C1F] flex flex-col py-8 px-4 font-['Manrope'] tracking-tight z-50 shrink-0">
+<div class="mb-12 px-4">
+<h1 class="text-2xl font-black tracking-tighter text-[#E1E2E7]">Optimizer</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-[#00E5FF] font-bold">Institutional Grade AI</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Dashboard
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/analyze">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span> Analyze
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/watchlist">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span> Watchlist
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/portfolio">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span> Portfolio
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/backtest">
+<span class="material-symbols-outlined" data-icon="history">history</span> Backtest
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/algo">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span> Algo Jobs
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#00E5FF] bg-[#272A2E] border-l-2 border-[#00E5FF] font-bold" href="/chat">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span> AI Chat
+</a>
+</nav>
+<div class="mt-auto px-4"><button class="flex items-center gap-3 w-full py-3 text-[#E1E2E7]/60 hover:text-error"><span class="material-symbols-outlined">logout</span> Logout</button></div>
+</aside>
+
+<div class="flex-1 flex flex-col h-screen relative grid-pattern">
+
+<header class="w-full h-16 px-4 md:px-8 flex justify-between items-center bg-[#111417]/80 backdrop-blur-xl border-b border-[#E1E2E7]/10 z-40 shrink-0">
+<div class="flex items-center gap-2 font-['Manrope'] text-sm uppercase tracking-widest text-[#E1E2E7]/60">
+<button id="mobile-menu-btn" class="md:hidden mr-2 flex items-center text-[#E1E2E7]"><span class="material-symbols-outlined text-[20px]">menu</span></button>
+<span>Home</span> <span class="material-symbols-outlined text-[14px]">chevron_right</span> <span class="text-[#00E5FF]">Nova AI Engine</span>
+</div>
+<div class="flex items-center gap-4 text-[#E1E2E7]/60">
+<button class="hover:text-[#00E5FF]"><span class="material-symbols-outlined">notifications</span></button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-[#E1E2E7]/20 bg-primary-container/20"></div>
+</div>
+</header>
+
+<main class="flex-1 overflow-y-auto p-8 flex justify-center">
+<div id="chat-container" class="w-full max-w-4xl flex flex-col justify-end space-y-6 pb-24">
+
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">smart_toy</span>
+</div>
+<div class="bg-surface-container-high rounded-2xl rounded-tl-sm p-5 text-sm text-on-surface shadow-lg border border-outline-variant/10">
+<p>System initialized. Optimizer Nova core online.</p>
+<p class="mt-2 text-on-surface-variant">I can analyze recent market data, run predictions against specific tickers, or assist with your algorithmic strategy parameters. What would you like to explore?</p>
+</div>
+</div>
+
+<div class="flex gap-4 flex-row-reverse">
+<div class="w-10 h-10 rounded-xl bg-surface-container-highest border border-outline-variant/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+</div>
+<div class="bg-primary/10 rounded-2xl rounded-tr-sm p-4 text-sm text-on-surface border border-primary/20">
+<p>Analyze NVDA's recent unusual options activity.</p>
+</div>
+</div>
+
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0 relative overflow-hidden">
+<span class="material-symbols-outlined text-primary relative z-10">smart_toy</span>
+<div class="absolute inset-x-0 bottom-0 bg-primary/20 animate-pulse h-1/2"></div>
+</div>
+<div class="bg-surface-container-high rounded-2xl rounded-tl-sm p-5 text-sm text-on-surface shadow-lg border border-outline-variant/10 w-full max-w-2xl">
+<p class="mb-3">Fetching derivatives telemetry on <strong>NVDA</strong>...</p>
+<div class="bg-surface-container p-4 rounded border border-outline-variant/10 space-y-2 text-xs font-mono">
+<div class="flex justify-between"><span>Call/Put Ratio:</span><span class="text-secondary">3.4:1</span></div>
+<div class="flex justify-between"><span>Implied Vol (30d):</span><span class="text-on-surface">54.2%</span></div>
+<div class="flex justify-between"><span>Unusual Volume:</span><span class="text-secondary">105c strikes expiring this Friday.</span></div>
+</div>
+<p class="mt-4 text-on-surface-variant">The models detect institutional accumulation ahead of earnings. Do you want to run a full prediction matrix?</p>
+</div>
+</div>
+
+</div>
+</main>
+
+<div class="absolute bottom-0 inset-x-0 p-8 bg-gradient-to-t from-surface via-surface to-transparent">
+<div class="max-w-4xl mx-auto align-center">
+<div class="relative flex items-center">
+<input id="chat-input" class="w-full bg-surface-container-high border border-outline-variant/30 rounded-2xl pl-6 pr-16 py-4 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-on-surface shadow-xl placeholder-on-surface-variant" placeholder="Enter query for Nova AI..." type="text" autocomplete="off"/>
+<button id="chat-send-btn" class="absolute right-3 bg-primary-container text-on-primary-container w-10 h-10 rounded-xl flex items-center justify-center hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+<p class="text-center text-[10px] uppercase tracking-widest text-on-surface-variant mt-3">Optimizer Nova can make mistakes. Verify critical trades.</p>
+</div>
+</div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const chatBtn = document.getElementById('chat-send-btn');
+    const chatInput = document.getElementById('chat-input');
+    const container = document.getElementById('chat-container');
+    const escapeHtml = (value) => value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+
+    async function sendMessage() {
+        const msg = chatInput.value.trim();
+        if (!msg) return;
+
+        // Append user message
+        const userHtml = `
+        <div class="flex gap-4 flex-row-reverse animate-[fadeUp_0.3s_ease-out]">
+            <div class="w-10 h-10 rounded-xl bg-surface-container-highest border border-outline-variant/30 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-on-surface-variant">person</span>
+            </div>
+            <div class="bg-primary/10 rounded-2xl rounded-tr-sm p-4 text-sm text-on-surface border border-primary/20 max-w-2xl">
+                <p>${escapeHtml(msg)}</p>
+            </div>
+        </div>`;
+        container.insertAdjacentHTML('beforeend', userHtml);
+        chatInput.value = '';
+        window.scrollTo(0, document.body.scrollHeight);
+
+        // Dummy typing indicator
+        const typingId = 'typing-' + Date.now();
+        const typingHtml = `
+        <div id="${typingId}" class="flex gap-4 animate-[fadeUp_0.3s_ease-out]">
+            <div class="w-10 h-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-primary text-sm animate-spin">progress_activity</span>
+            </div>
+        </div>`;
+        container.insertAdjacentHTML('beforeend', typingHtml);
+        window.scrollTo(0, document.body.scrollHeight);
+
+        try {
+            const res = await API.post('/chat/', { message: msg });
+            document.getElementById(typingId).remove();
+
+            const botHtml = `
+            <div class="flex gap-4 animate-[fadeUp_0.3s_ease-out]">
+                <div class="w-10 h-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-primary">smart_toy</span>
+                </div>
+                <div class="bg-surface-container-high rounded-2xl rounded-tl-sm p-5 text-sm text-on-surface shadow-lg border border-outline-variant/10 w-full max-w-2xl">
+                    <p>${escapeHtml(res.reply).replace(/\n/g, '<br>')}</p>
+                </div>
+            </div>`;
+            container.insertAdjacentHTML('beforeend', botHtml);
+            window.scrollTo(0, document.body.scrollHeight);
+        } catch (e) {
+            document.getElementById(typingId).remove();
+            toast('Error', 'Nova AI failed to respond', 'error');
+        }
+    }
+
+    chatBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+});
+</script>
+</body></html>

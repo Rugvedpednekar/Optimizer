@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Optimizer | Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#9cf0ff",
+                        "tertiary-fixed-dim": "#ffb4aa",
+                        "on-tertiary-container": "#b60009",
+                        "primary-fixed-dim": "#00daf3",
+                        "on-secondary-fixed-variant": "#005300",
+                        "surface": "#111417",
+                        "surface-container": "#1d2023",
+                        "secondary-container": "#00c705",
+                        "surface-container-low": "#191c1f",
+                        "secondary": "#3ce42f",
+                        "on-surface-variant": "#bac9cc",
+                        "background": "#111417",
+                        "on-tertiary": "#690003",
+                        "on-tertiary-fixed": "#410001",
+                        "outline": "#849396",
+                        "error": "#ffb4ab",
+                        "tertiary": "#ffe8e4",
+                        "surface-container-high": "#272a2e",
+                        "inverse-surface": "#e1e2e7",
+                        "on-primary-fixed": "#001f24",
+                        "on-primary-fixed-variant": "#004f58",
+                        "on-background": "#e1e2e7",
+                        "error-container": "#93000a",
+                        "primary-container": "#00e5ff",
+                        "surface-bright": "#37393d",
+                        "inverse-primary": "#006875",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#930005",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#323538",
+                        "surface-dim": "#111417",
+                        "tertiary-container": "#ffc2ba",
+                        "on-secondary": "#003a00",
+                        "on-surface": "#e1e2e7",
+                        "tertiary-fixed": "#ffdad5",
+                        "inverse-on-surface": "#2e3134",
+                        "secondary-fixed": "#77ff62",
+                        "primary": "#c3f5ff",
+                        "on-secondary-container": "#004b00",
+                        "outline-variant": "#3b494c",
+                        "surface-container-lowest": "#0b0e11",
+                        "on-primary-container": "#00626e",
+                        "on-secondary-fixed": "#002200",
+                        "surface-variant": "#323538",
+                        "surface-tint": "#00daf3",
+                        "secondary-fixed-dim": "#3ce42f",
+                        "on-primary": "#00363d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(50, 53, 56, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .bg-mesh {
+            background-image: radial-gradient(at 0% 0%, rgba(0, 229, 255, 0.15) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(0, 218, 243, 0.1) 0px, transparent 50%);
+        }
+    </style>
+    <script src="/static/js/app.js"></script>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<main class="flex min-h-screen">
+<!-- Left: Brand/Hero Section -->
+<section class="hidden lg:flex lg:w-3/5 relative overflow-hidden bg-surface-container-lowest">
+<!-- Background Visual -->
+<div class="absolute inset-0 z-0 opacity-40">
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
+</div>
+<div class="relative z-10 flex flex-col justify-between p-16 w-full h-full">
+<!-- Logo Anchor -->
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">query_stats</span>
+</div>
+<span class="font-headline font-black text-3xl tracking-tighter text-on-surface">Optimizer</span>
+</div>
+<!-- Hero Content -->
+<div class="max-w-xl">
+<h1 class="font-headline font-extrabold text-6xl leading-[1.1] mb-6 tracking-tight">
+                        Institutional Grade <br/>
+<span class="text-primary-fixed-dim">AI Trading Copilot.</span>
+</h1>
+<p class="text-xl text-on-surface-variant font-light leading-relaxed mb-12">
+                        Harness the power of neural architecture to optimize portfolio management and strategy backtesting with microsecond precision.
+                    </p>
+<!-- Feature Chips -->
+<div class="flex flex-wrap gap-4">
+<div class="glass-panel px-6 py-4 rounded-xl flex items-center space-x-4 border border-outline-variant/10 shadow-2xl">
+<span class="material-symbols-outlined text-primary-container">speed</span>
+<div>
+<p class="text-xs font-headline uppercase tracking-widest text-on-surface-variant">Backtesting</p>
+<p class="text-sm font-semibold text-on-surface">Simulate in seconds</p>
+</div>
+</div>
+<div class="glass-panel px-6 py-4 rounded-xl flex items-center space-x-4 border border-outline-variant/10 shadow-2xl">
+<span class="material-symbols-outlined text-secondary">verified</span>
+<div>
+<p class="text-xs font-headline uppercase tracking-widest text-on-surface-variant">Signals</p>
+<p class="text-sm font-semibold text-on-surface">Institutional grade</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right: Login Form -->
+<section class="w-full lg:w-2/5 flex flex-col justify-center items-center p-8 md:p-16 bg-surface-container-low relative">
+<div class="absolute inset-0 bg-mesh opacity-50 z-0"></div>
+<div class="w-full max-w-md relative z-10">
+<div class="mb-10">
+<h2 class="font-headline font-bold text-3xl text-on-surface mb-2 tracking-tight">Access Terminal</h2>
+<p class="text-on-surface-variant">Sign in to manage your high-frequency strategies.</p>
+</div>
+<form action="/" class="space-y-6">
+<!-- Email/Username Input -->
+<div class="space-y-2">
+<label class="font-headline text-xs uppercase tracking-widest text-on-surface-variant font-semibold px-1">Email or Username</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-primary-container text-on-surface-variant/60">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+<input id="login-identifier" class="w-full bg-surface-container-highest border-none rounded-xl py-4 pl-12 pr-4 text-on-surface focus:ring-0 transition-all placeholder:text-on-surface-variant/30" placeholder="e.g. test@optimizer.ai or test" type="text" required/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="space-y-2">
+<div class="flex justify-between items-center px-1">
+<label class="font-headline text-xs uppercase tracking-widest text-on-surface-variant font-semibold">Security Token</label>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-primary-container text-on-surface-variant/60">
+<span class="material-symbols-outlined text-[20px]">key</span>
+</div>
+<input id="login-password" class="w-full bg-surface-container-highest border-none rounded-xl py-4 pl-12 pr-4 text-on-surface focus:ring-0 transition-all placeholder:text-on-surface-variant/30" placeholder="••••••••••••" type="password" required/>
+</div>
+</div>
+<!-- Sign In Button -->
+<button class="w-full bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(0,229,255,0.2)] active:scale-[0.98] flex items-center justify-center space-x-2" type="submit">
+<span>Initiate Session</span>
+<span class="material-symbols-outlined text-lg">login</span>
+</button>
+<p class="text-sm text-center text-on-surface-variant mt-4">Don't have an account? <a href="/signup" class="text-primary hover:underline">Sign up</a></p>
+</form>
+</div>
+</section>
+</main>
+<script>
+    document.querySelector('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const identifier = document.getElementById('login-identifier').value;
+        const password = document.getElementById('login-password').value;
+        try {
+            const res = await API.post('/auth/login', { identifier, password });
+            if (res.access_token) {
+                localStorage.setItem('token', res.access_token);
+                window.location.href = '/';
+            } else {
+                toast('Error', res.detail || 'Login failed', 'error');
+            }
+        } catch (err) {
+            toast('Error', 'Invalid credentials or server error', 'error');
+        }
+    });
+</script>
+</body></html>

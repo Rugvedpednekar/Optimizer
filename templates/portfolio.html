@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Optimizer - Portfolio Insight</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#9cf0ff", "tertiary-fixed-dim": "#ffb4aa", "on-tertiary-container": "#b60009", "primary-fixed-dim": "#00daf3", "on-secondary-fixed-variant": "#005300", "surface": "#111417", "surface-container": "#1d2023", "secondary-container": "#00c705", "surface-container-low": "#191c1f", "secondary": "#3ce42f", "on-surface-variant": "#bac9cc", "background": "#111417", "on-tertiary": "#690003", "on-tertiary-fixed": "#410001", "outline": "#849396", "error": "#ffb4ab", "tertiary": "#ffe8e4", "surface-container-high": "#272a2e", "inverse-surface": "#e1e2e7", "on-primary-fixed": "#001f24", "on-primary-fixed-variant": "#004f58", "on-background": "#e1e2e7", "error-container": "#93000a", "primary-container": "#00e5ff", "surface-bright": "#37393d", "inverse-primary": "#006875", "on-error-container": "#ffdad6", "on-tertiary-fixed-variant": "#930005", "on-error": "#690005", "surface-container-highest": "#323538", "surface-dim": "#111417", "tertiary-container": "#ffc2ba", "on-secondary": "#003a00", "on-surface": "#e1e2e7", "tertiary-fixed": "#ffdad5", "inverse-on-surface": "#2e3134", "secondary-fixed": "#77ff62", "primary": "#c3f5ff", "on-secondary-container": "#004b00", "outline-variant": "#3b494c", "surface-container-lowest": "#0b0e11", "on-primary-container": "#00626e", "on-secondary-fixed": "#002200", "surface-variant": "#323538", "surface-tint": "#00daf3", "secondary-fixed-dim": "#3ce42f", "on-primary": "#00363d"
+                    },
+                    "fontFamily": { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #111417; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .grid-pattern {
+            background-image: radial-gradient(rgba(132, 147, 150, 0.07) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+        .disclaimer-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: rgba(251, 191, 36, 0.06);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #b0b8c8;
+            line-height: 1.6;
+        }
+        .disclaimer-icon {
+            font-size: 16px;
+            color: #fbbf24;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .disclaimer-text strong {
+            color: #fbbf24;
+        }
+        .btn-cyan-outline {
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: #00daf3;
+            background: transparent;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            transition: all 0.18s;
+        }
+        .btn-cyan-outline:hover {
+            background: rgba(56, 189, 248, 0.08);
+        }
+    </style>
+    <script src="/static/js/app.js"></script>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
+
+<aside id="sidebar" class="transform -translate-x-full md:translate-x-0 transition-transform duration-200 h-screen w-64 fixed left-0 top-0 border-r border-transparent bg-[#191C1F] flex flex-col py-8 px-4 font-['Manrope'] tracking-tight shadow-[40px_0_40px_rgba(0,0,0,0.04)] z-50">
+<div class="flex justify-between items-start mb-12 px-4">
+<div>
+<h1 class="text-2xl font-black tracking-tighter text-[#E1E2E7]">Optimizer</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-[#00E5FF] font-bold">Institutional Grade AI</p>
+</div>
+<button id="close-sidebar-btn" class="md:hidden text-[#E1E2E7]"><span class="material-symbols-outlined">close</span></button>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Dashboard
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/analyze">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span> Analyze
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/watchlist">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span> Watchlist
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#00E5FF] bg-[#272A2E] border-l-2 border-[#00E5FF] font-bold" href="/portfolio">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span> Portfolio
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/backtest">
+<span class="material-symbols-outlined" data-icon="history">history</span> Backtest
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/algo">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span> Algo Jobs
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/chat">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span> AI Chat
+</a>
+</nav>
+<div class="mt-auto px-4"><button class="flex items-center gap-3 w-full py-3 text-[#E1E2E7]/60 hover:text-error"><span class="material-symbols-outlined">logout</span> Logout</button></div>
+</aside>
+
+<header class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] h-16 px-4 md:px-8 flex justify-between items-center bg-[#111417]/60 backdrop-blur-xl border-b border-[#E1E2E7]/10 z-40">
+<div class="flex items-center gap-2 font-['Manrope'] text-sm uppercase tracking-widest text-[#E1E2E7]/60">
+<button id="mobile-menu-btn" class="md:hidden mr-2 flex items-center text-[#E1E2E7]"><span class="material-symbols-outlined text-[20px]">menu</span></button>
+<span>Home</span> <span class="material-symbols-outlined text-[14px]">chevron_right</span> <span class="text-[#00E5FF]">Portfolio Insight</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="absolute inset-y-0 left-3 flex items-center text-[#E1E2E7]/40"><span class="material-symbols-outlined text-[20px]">search</span></span>
+<input class="bg-surface-container-highest/50 border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-[#00E5FF] w-64" placeholder="Search portfolio..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-[#E1E2E7]/60">
+<button class="hover:text-[#00E5FF]"><span class="material-symbols-outlined">notifications</span></button>
+<button class="hover:text-[#00E5FF]"><span class="material-symbols-outlined">settings</span></button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-[#E1E2E7]/20 bg-primary-container/20"></div>
+</div></div></header>
+
+<main class="md:ml-64 pt-16 min-h-screen grid-pattern">
+<div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+<section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b border-outline-variant/30">
+<div>
+<h2 class="text-4xl font-black font-headline tracking-tight text-on-surface">Portfolio Insight</h2>
+<p class="text-on-surface-variant mt-2 max-w-xl">Comprehensive oversight of all current holdings and automated margin allocations.</p>
+</div>
+<button id="toggle-trade-btn" class="bg-primary-container text-on-primary-container px-6 py-2 rounded-xl font-headline font-bold flex items-center gap-2 hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-sm">swap_vert</span> Quick Trade
+</button>
+</section>
+
+<div class="disclaimer-banner">
+  <span class="disclaimer-icon">⚠</span>
+  <div class="disclaimer-text">
+    <strong>Educational Purpose Only.</strong>
+    This portfolio simulator uses paper money and is intended
+    solely for learning algorithmic trading concepts.
+    No real funds are involved. Past performance does not
+    guarantee future results. Always consult a licensed
+    financial advisor before making real investment decisions.
+  </div>
+</div>
+
+<!-- KPI STATS -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="surface-container-high rounded-xl p-6 relative overflow-hidden">
+<p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Total Value</p>
+<p id="totalValue" class="text-3xl font-headline font-black text-on-surface">$0.00</p>
+</div>
+<div class="surface-container-high rounded-xl p-6 relative overflow-hidden">
+<p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Cash Balance</p>
+<p id="cashBalance" class="text-3xl font-headline font-black text-on-surface">$0.00</p>
+</div>
+<div class="surface-container-high rounded-xl p-6 relative overflow-hidden">
+<p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Unrealized P&L</p>
+<p id="unrealizedPnl" class="text-3xl font-headline font-black">$0.00</p>
+</div>
+</section>
+
+<!-- QUICK TRADE PANEL -->
+<section id="trade-panel" class="hidden surface-container-high rounded-xl p-6 border border-primary/30 animate-[fadeUp_0.2s_ease-out]">
+<h3 class="font-headline font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">swap_vert</span> Paper Trade Engine</h3>
+<div class="flex gap-4 items-end">
+<div class="flex-1">
+<label class="block text-xs uppercase text-on-surface-variant mb-1">Ticker</label>
+<input id="trade-ticker" type="text" class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-lg px-4 py-2 uppercase focus:ring-1 focus:border-primary text-sm" placeholder="AAPL">
+</div>
+<div class="flex-1">
+<label class="block text-xs uppercase text-on-surface-variant mb-1">Quantity</label>
+<input id="trade-qty" type="number" step="1" min="1" class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-lg px-4 py-2 focus:ring-1 focus:border-primary text-sm" placeholder="10">
+</div>
+<button id="trade-buy-btn" class="bg-secondary-container/20 text-secondary-container border border-secondary-container/30 px-6 py-2 rounded-lg font-bold hover:bg-secondary/20 h-[42px] transition-colors">BUY</button>
+<button id="trade-sell-btn" class="bg-error-container/20 text-tertiary-fixed-dim border border-error-container/30 px-6 py-2 rounded-lg font-bold hover:bg-error/20 h-[42px] transition-colors">SELL</button>
+</div>
+</section>
+
+<!-- HOLDINGS -->
+<div id="portfolio-empty-state" class="surface-container-high rounded-2xl p-6 border border-outline-variant/20 flex flex-col items-center justify-center h-64 text-center">
+<span class="material-symbols-outlined text-6xl text-outline-variant mb-4" style="font-variation-settings: 'wght' 200;">donut_large</span>
+<p class="text-on-surface-variant font-mono text-sm max-w-xs mx-auto">No positions open.</p>
+</div>
+
+<div id="portfolio-holdings" class="hidden rounded-xl overflow-hidden border border-outline-variant/20 shadow-lg overflow-x-auto">
+<div class="min-w-[800px]">
+<div class="bg-surface-container py-3 px-6 grid grid-cols-7 gap-4 text-xs uppercase tracking-widest text-on-surface-variant font-bold border-b border-outline-variant/20">
+<div>Ticker</div><div class="text-right">Qty</div><div class="text-right">Bought At</div><div class="text-right">Current Price</div><div class="text-right">Market Val</div><div class="text-right">P&L</div><div class="text-right">% Ret</div>
+</div>
+<div id="holdings-list" class="divide-y divide-outline-variant/10 bg-surface-container-low"></div>
+</div>
+</div>
+
+<div class="algo-recommendations" id="algoRecs" style="margin-top:28px">
+  <div class="section-header" style="display:flex;align-items:center;
+       justify-content:space-between;margin-bottom:14px">
+    <h3 style="font-size:16px;font-weight:600">
+      AI Portfolio Recommendations
+    </h3>
+    <button class="btn-cyan-outline" onclick="loadRecommendations()">
+      ⚡ Run Algorithm
+    </button>
+  </div>
+  <div id="recsOutput">
+    <div style="color:#3d4d6a;font-size:13px;padding:20px 0">
+      Run the portfolio engine to generate paper-trading suggestions for your active positions.
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<section class="mt-12 space-y-4">
+<h3 class="font-headline font-bold text-xl">Execution History</h3>
+<div class="rounded-xl overflow-hidden border border-outline-variant/20 shadow-lg overflow-x-auto">
+<div class="min-w-[800px]">
+<div class="bg-surface-container py-3 px-6 grid grid-cols-6 gap-4 text-xs uppercase tracking-widest text-on-surface-variant font-bold border-b border-outline-variant/20">
+<div>Time</div><div>Action</div><div>Ticker</div><div class="text-right">Qty</div><div class="text-right">Price</div><div class="text-right">Est. Value</div>
+</div>
+<div id="history-list" class="divide-y divide-outline-variant/10 bg-surface-container-low">
+  <div class="py-6 text-center text-sm text-on-surface-variant">No history found.</div>
+</div>
+</div>
+</div>
+</section>
+
+</div>
+
+<script>
+const portfolioSafeNum = v => {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+};
+
+async function fetchHoldingQuote(ticker) {
+  try {
+    const data = await API.get(`/market/${encodeURIComponent(ticker)}`);
+    if (data && (data.current_price !== undefined || data.previous_close !== undefined)) {
+      return {
+        current_price: portfolioSafeNum(data.current_price),
+        previous_close: portfolioSafeNum(data.previous_close),
+        change: portfolioSafeNum(data.change),
+        change_pct: portfolioSafeNum(data.change_pct),
+      };
+    }
+  } catch {}
+
+  try {
+    const data = await API.get(`/analysis/chart/${encodeURIComponent(ticker)}?period=1mo`);
+    const prices = Array.isArray(data?.prices) ? data.prices : [];
+    if (prices.length) {
+      const last = prices[prices.length - 1];
+      const prev = prices[prices.length - 2] || last;
+      const current = portfolioSafeNum(last.c);
+      const previous = portfolioSafeNum(prev.c || current);
+      const change = current - previous;
+      const change_pct = previous ? (change / previous) * 100 : 0;
+      return {
+        current_price: current,
+        previous_close: previous,
+        change,
+        change_pct,
+      };
+    }
+  } catch {}
+
+  return null;
+}
+
+function buildRecommendationEmptyState(message, detail) {
+  return `
+    <div class="rounded-2xl border border-outline-variant/20 bg-surface-container-high px-5 py-6">
+      <div class="flex items-start gap-4">
+        <div class="w-11 h-11 rounded-xl bg-primary-container/10 border border-primary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary-fixed-dim">neurology</span>
+        </div>
+        <div class="space-y-1">
+          <div class="text-sm font-bold text-on-surface">${message}</div>
+          <div class="text-sm text-on-surface-variant leading-relaxed">${detail}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadRecommendations() {
+  const el = document.getElementById('recsOutput');
+  el.innerHTML = '<div style="color:#7e8fb0;font-size:13px">Analyzing holdings...</div>';
+  try {
+    const data = await API.get('/portfolio/recommendations');
+    if (!data.items || !data.items.length) {
+      el.innerHTML = buildRecommendationEmptyState(
+        'No recommendations yet.',
+        'Open at least one paper position to let the portfolio engine evaluate signals, risk posture, and potential next actions.'
+      );
+      return;
+    }
+    el.innerHTML = data.items.map(r => `
+      <div style="display:flex;align-items:center;gap:16px;padding:14px;
+           background:#1a1f26;border:1px solid rgba(56,189,248,0.08);
+           border-radius:10px;margin-bottom:8px">
+        <div style="font-weight:700;font-size:15px;min-width:60px">${r.ticker}</div>
+        <div style="flex:1;font-size:12px;color:#7e8fb0">${r.reason}</div>
+        <div style="font-size:12px;color:#7e8fb0">${(r.confidence*100).toFixed(0)}% conf</div>
+        <span style="padding:4px 12px;border-radius:4px;font-size:11px;font-weight:600;
+              background:${r.signal==='BUY'?'rgba(52,211,153,.12)':r.signal==='SELL'?'rgba(248,113,113,.12)':'rgba(251,191,36,.12)'};
+              color:${r.signal==='BUY'?'#34d399':r.signal==='SELL'?'#f87171':'#fbbf24'}">
+          ${r.action}
+        </span>
+      </div>
+    `).join('');
+  } catch(e) {
+    el.innerHTML = buildRecommendationEmptyState(
+      'Recommendation engine unavailable.',
+      'The current backend instance is not exposing portfolio recommendation data yet. Your portfolio and trade history are still available.'
+    );
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleTradeBtn = document.getElementById('toggle-trade-btn');
+    const tradePanel = document.getElementById('trade-panel');
+    toggleTradeBtn.addEventListener('click', () => {
+        tradePanel.classList.toggle('hidden');
+    });
+
+    async function loadPortfolio() {
+        try {
+            const data = await API.get('/portfolio');
+            if(!data) return;
+
+            const rawHoldings = Array.isArray(data.holdings) ? data.holdings : [];
+            const holdings = await Promise.all(rawHoldings.map(async h => {
+                const quantity = portfolioSafeNum(h.quantity);
+                const averageCost = portfolioSafeNum(h.average_cost ?? h.average_price);
+                const quote = await fetchHoldingQuote(h.ticker);
+                const livePrice = portfolioSafeNum(quote?.current_price);
+                const apiPrice = portfolioSafeNum(h.current_price);
+                const currentPrice = livePrice > 0 ? livePrice : apiPrice;
+                const marketValue = quantity * currentPrice;
+                const unrealizedPnl = marketValue - (averageCost * quantity);
+                return {
+                    ...h,
+                    quantity,
+                    average_cost: averageCost,
+                    average_price: averageCost,
+                    current_price: currentPrice,
+                    market_value: marketValue,
+                    unrealized_pnl: unrealizedPnl,
+                };
+            }));
+
+            const derivedMarketValue = holdings.reduce((sum, h) => sum + portfolioSafeNum(h.market_value), 0);
+            const derivedUnrealizedPnl = holdings.reduce((sum, h) => sum + portfolioSafeNum(h.unrealized_pnl), 0);
+            const cashBalance = portfolioSafeNum(data.cash_balance);
+            const totalValue = portfolioSafeNum(data.total_value) > 0
+                ? portfolioSafeNum(data.total_value)
+                : cashBalance + derivedMarketValue;
+            const totalUnrealizedPnl = Number.isFinite(Number(data.total_unrealized_pnl))
+                ? portfolioSafeNum(data.total_unrealized_pnl)
+                : derivedUnrealizedPnl;
+
+            if(!holdings.length) {
+                document.getElementById('portfolio-empty-state').classList.remove('hidden');
+                document.getElementById('portfolio-holdings').classList.add('hidden');
+            } else {
+                document.getElementById('portfolio-empty-state').classList.add('hidden');
+                document.getElementById('portfolio-holdings').classList.remove('hidden');
+                
+                let html = '';
+                holdings.forEach(h => {
+                    const avgCost = portfolioSafeNum(h.average_cost ?? h.average_price);
+                    const price = portfolioSafeNum(h.current_price);
+                    const quantity = portfolioSafeNum(h.quantity);
+                    const mv = portfolioSafeNum(h.market_value);
+                    const costVal = avgCost * quantity;
+                    const pnl = portfolioSafeNum(h.unrealized_pnl);
+                    const retPct = costVal > 0 ? (pnl/costVal)*100 : 0;
+
+                    const pnlCol = pnl >= 0 ? 'text-secondary' : 'text-error';
+                    html += `
+                    <div class="py-4 px-6 grid grid-cols-7 gap-4 items-center hover:bg-surface-container-high transition-colors font-mono text-sm">
+                        <div class="font-bold text-on-surface flex items-center gap-2"><div class="w-8 h-8 rounded bg-surface-container-highest flex justify-center items-center font-headline text-xs shadow-inner">${h.ticker}</div></div>
+                        <div class="text-right">${quantity}</div>
+                        <div class="text-right">${fmt.money(avgCost)}</div>
+                        <div class="text-right font-bold text-on-surface">${fmt.money(price)}</div>
+                        <div class="text-right">${fmt.money(mv)}</div>
+                        <div class="text-right ${pnlCol} font-bold">${fmt.money(pnl)}</div>
+                        <div class="text-right ${pnlCol}">${fmt.pct(retPct)}</div>
+                    </div>`;
+                });
+                document.getElementById('holdings-list').innerHTML = html;
+            }
+
+            document.getElementById('totalValue').textContent = fmt.money(totalValue);
+            document.getElementById('cashBalance').textContent = fmt.money(cashBalance);
+            const pnl = totalUnrealizedPnl;
+            const pnlEl = document.getElementById('unrealizedPnl');
+            pnlEl.textContent = fmt.money(totalUnrealizedPnl);
+            pnlEl.style.color = pnl > 0 ? '#34d399' : pnl < 0 ? '#f87171' : '#34d399';
+
+        } catch(e) {
+            console.error("Portfolio load failed", e);
+        }
+    }
+
+    async function loadHistory() {
+        try {
+            const hist = await API.get('/portfolio/history');
+            const hList = document.getElementById('history-list');
+            if(!hist || hist.length === 0) {
+                hList.innerHTML = '<div class="py-6 text-center text-sm text-on-surface-variant">No trade history.</div>';
+                return;
+            }
+
+            let html = '';
+            hist.forEach(t => {
+                const isBuy = t.action.toUpperCase() === 'BUY';
+                const actionBadge = isBuy 
+                    ? '<span class="bg-secondary-container/20 text-secondary-container px-2 py-1 rounded text-xs font-bold border border-secondary-container/30">BUY</span>'
+                    : '<span class="bg-error-container/20 text-tertiary-fixed-dim px-2 py-1 rounded text-xs font-bold border border-error-container/30">SELL</span>';
+                
+                html += `
+                <div class="py-4 px-6 grid grid-cols-6 gap-4 items-center hover:bg-surface-container-high transition-colors text-sm">
+                    <div class="text-xs text-on-surface-variant">${fmt.datetime(t.executed_at)}</div>
+                    <div>${actionBadge}</div>
+                    <div class="font-bold text-on-surface">${t.ticker}</div>
+                    <div class="text-right font-mono">${t.quantity}</div>
+                    <div class="text-right font-mono">${fmt.money(t.price)}</div>
+                    <div class="text-right font-mono">${fmt.money(t.quantity * t.price)}</div>
+                </div>`;
+            });
+            hList.innerHTML = html;
+        } catch(e) {
+            console.error("History fail", e);
+        }
+    }
+
+    // Trade Handlers
+    async function executeTrade(action) {
+        const tkr = document.getElementById('trade-ticker').value.trim().toUpperCase();
+        const qty = parseInt(document.getElementById('trade-qty').value, 10);
+        if(!tkr || !qty || qty <= 0) return toast('Warning', 'Valid Ticker & Quantity required', 'error');
+
+        try {
+            const quote = await fetchHoldingQuote(tkr);
+            const price = portfolioSafeNum(quote?.current_price);
+
+            const res = await fetch(API.base + `/portfolio/trade`, {
+                method: 'POST',
+                headers: API.headers(),
+                body: JSON.stringify({ ticker: tkr, action, quantity: qty, price })
+            });
+            const data = await res.json();
+            if(!res.ok) throw new Error(data.detail || 'Trade failed');
+            
+            toast('Success', `Executed ${action} for ${qty} shares of ${tkr}`, 'success');
+            document.getElementById('trade-ticker').value = '';
+            document.getElementById('trade-qty').value = '';
+            tradePanel.classList.add('hidden');
+            
+            // Reload
+            loadPortfolio();
+            loadHistory();
+        } catch(e) {
+            toast('Failed', e.message, 'error');
+        }
+    }
+
+    document.getElementById('trade-buy-btn').addEventListener('click', () => executeTrade('BUY'));
+    document.getElementById('trade-sell-btn').addEventListener('click', () => executeTrade('SELL'));
+
+    loadPortfolio();
+    loadHistory();
+});
+</script>
+</main>
+
+
+</body></html>

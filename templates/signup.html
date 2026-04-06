@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Optimizer | Sign Up</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#9cf0ff",
+                        "primary-fixed-dim": "#00daf3",
+                        "surface": "#111417",
+                        "surface-container-highest": "#323538",
+                        "surface-container-low": "#191c1f",
+                        "outline-variant": "#3b494c",
+                        "on-surface": "#e1e2e7",
+                        "on-surface-variant": "#bac9cc",
+                        "primary-container": "#00e5ff",
+                        "on-primary-container": "#00626e",
+                        "primary": "#c3f5ff",
+                        "error": "#ffb4ab"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(50, 53, 56, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .bg-mesh {
+            background-image: radial-gradient(at 0% 0%, rgba(0, 229, 255, 0.15) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(0, 218, 243, 0.1) 0px, transparent 50%);
+        }
+    </style>
+    <script src="/static/js/app.js"></script>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<main class="flex min-h-screen">
+<section class="hidden lg:flex lg:w-3/5 relative overflow-hidden bg-surface-container-low">
+<div class="absolute inset-0 z-0 opacity-40">
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
+</div>
+<div class="relative z-10 flex flex-col justify-between p-16 w-full h-full">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">query_stats</span>
+</div>
+<span class="font-headline font-black text-3xl tracking-tighter text-on-surface">Optimizer</span>
+</div>
+<div class="max-w-xl">
+<h1 class="font-headline font-extrabold text-6xl leading-[1.1] mb-6 tracking-tight">
+                        Build Your <br/>
+<span class="text-primary-fixed-dim">Trading Workspace.</span>
+</h1>
+<p class="text-xl text-on-surface-variant font-light leading-relaxed mb-12">
+                        Create an account to analyze markets, backtest strategies, and manage paper trades from one interface.
+                    </p>
+</div>
+</div>
+</section>
+<section class="w-full lg:w-2/5 flex flex-col justify-center items-center p-8 md:p-16 bg-surface-container-low relative">
+<div class="absolute inset-0 bg-mesh opacity-50 z-0"></div>
+<div class="w-full max-w-md relative z-10">
+<div class="mb-10">
+<h2 class="font-headline font-bold text-3xl text-on-surface mb-2 tracking-tight">Create Account</h2>
+<p class="text-on-surface-variant">Set up your Optimizer workspace.</p>
+</div>
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="font-headline text-xs uppercase tracking-widest text-on-surface-variant font-semibold px-1">Username</label>
+<input id="signup-username" class="w-full bg-surface-container-highest border-none rounded-xl py-4 px-4 text-on-surface focus:ring-0 transition-all placeholder:text-on-surface-variant/30" placeholder="Optional username" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-headline text-xs uppercase tracking-widest text-on-surface-variant font-semibold px-1">Email</label>
+<input id="signup-email" class="w-full bg-surface-container-highest border-none rounded-xl py-4 px-4 text-on-surface focus:ring-0 transition-all placeholder:text-on-surface-variant/30" placeholder="name@example.com" type="email" required/>
+</div>
+<div class="space-y-2">
+<label class="font-headline text-xs uppercase tracking-widest text-on-surface-variant font-semibold px-1">Password</label>
+<input id="signup-password" class="w-full bg-surface-container-highest border-none rounded-xl py-4 px-4 text-on-surface focus:ring-0 transition-all placeholder:text-on-surface-variant/30" placeholder="Create a password" type="password" required/>
+</div>
+<button class="w-full bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(0,229,255,0.2)] active:scale-[0.98] flex items-center justify-center space-x-2" type="submit">
+<span>Create Account</span>
+<span class="material-symbols-outlined text-lg">person_add</span>
+</button>
+<p class="text-sm text-center text-on-surface-variant mt-4">Already have an account? <a href="/login" class="text-primary hover:underline">Sign in</a></p>
+</form>
+</div>
+</section>
+</main>
+<script>
+    document.querySelector('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('signup-username').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+        try {
+            const res = await API.post('/auth/signup', { username: username || null, email, password });
+            if (res.access_token) {
+                localStorage.setItem('token', res.access_token);
+                window.location.href = '/';
+            } else {
+                toast('Error', res.detail || 'Signup failed', 'error');
+            }
+        } catch (err) {
+            toast('Error', 'Unable to create account', 'error');
+        }
+    });
+</script>
+</body></html>

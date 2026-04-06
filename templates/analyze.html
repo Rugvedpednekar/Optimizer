@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Optimizer - Analysis Engine</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#9cf0ff", "tertiary-fixed-dim": "#ffb4aa", "on-tertiary-container": "#b60009", "primary-fixed-dim": "#00daf3", "on-secondary-fixed-variant": "#005300", "surface": "#111417", "surface-container": "#1d2023", "secondary-container": "#00c705", "surface-container-low": "#191c1f", "secondary": "#3ce42f", "on-surface-variant": "#bac9cc", "background": "#111417", "on-tertiary": "#690003", "on-tertiary-fixed": "#410001", "outline": "#849396", "error": "#ffb4ab", "tertiary": "#ffe8e4", "surface-container-high": "#272a2e", "inverse-surface": "#e1e2e7", "on-primary-fixed": "#001f24", "on-primary-fixed-variant": "#004f58", "on-background": "#e1e2e7", "error-container": "#93000a", "primary-container": "#00e5ff", "surface-bright": "#37393d", "inverse-primary": "#006875", "on-error-container": "#ffdad6", "on-tertiary-fixed-variant": "#930005", "on-error": "#690005", "surface-container-highest": "#323538", "surface-dim": "#111417", "tertiary-container": "#ffc2ba", "on-secondary": "#003a00", "on-surface": "#e1e2e7", "tertiary-fixed": "#ffdad5", "inverse-on-surface": "#2e3134", "secondary-fixed": "#77ff62", "primary": "#c3f5ff", "on-secondary-container": "#004b00", "outline-variant": "#3b494c", "surface-container-lowest": "#0b0e11", "on-primary-container": "#00626e", "on-secondary-fixed": "#002200", "surface-variant": "#323538", "surface-tint": "#00daf3", "secondary-fixed-dim": "#3ce42f", "on-primary": "#00363d"
+                    },
+                    "fontFamily": { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111417;
+        }
+
+        .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .grid-pattern {
+            background-image: radial-gradient(rgba(132, 147, 150, 0.07) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        .chart-grid {
+            background-image: linear-gradient(rgba(132, 147, 150, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(132, 147, 150, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        select option {
+            background-color: #272a2e;
+            /* matches surface-container-high */
+            color: #e1e2e7;
+            /* matches on-surface */
+        }
+    </style>
+    <script src="/static/js/app.js"></script>
+</head>
+
+<body class="bg-surface text-on-surface selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
+    <aside id="sidebar"
+        class="transform -translate-x-full md:translate-x-0 transition-transform duration-200 h-screen w-64 fixed left-0 top-0 border-r border-transparent bg-[#191C1F] flex flex-col py-8 px-4 font-['Manrope'] tracking-tight shadow-[40px_0_40px_rgba(0,0,0,0.04)] z-50">
+        <div class="flex justify-between items-start mb-12 px-4">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter text-[#E1E2E7]">Optimizer</h1>
+                <p class="text-[10px] uppercase tracking-[0.2em] text-[#00E5FF] font-bold">Institutional Grade AI</p>
+            </div>
+            <button id="close-sidebar-btn" class="md:hidden text-[#E1E2E7]"><span
+                    class="material-symbols-outlined">close</span></button>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Dashboard
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#00E5FF] bg-[#272A2E] border-l-2 border-[#00E5FF] font-bold"
+                href="/analyze">
+                <span class="material-symbols-outlined" data-icon="query_stats">query_stats</span> Analyze
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/watchlist">
+                <span class="material-symbols-outlined" data-icon="visibility">visibility</span> Watchlist
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/portfolio">
+                <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+                Portfolio
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/backtest">
+                <span class="material-symbols-outlined" data-icon="history">history</span> Backtest
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/algo">
+                <span class="material-symbols-outlined" data-icon="psychology">psychology</span> Algo Jobs
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/chat">
+                <span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span> AI Chat
+            </a>
+        </nav>
+        <div class="mt-auto px-4"><button
+                class="flex items-center gap-3 w-full py-3 text-[#E1E2E7]/60 hover:text-error"><span
+                    class="material-symbols-outlined">logout</span> Logout</button></div>
+    </aside>
+    <header
+        class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] h-16 px-4 md:px-8 flex justify-between items-center bg-[#111417]/60 backdrop-blur-xl border-b border-[#E1E2E7]/10 z-40">
+        <div class="flex items-center gap-2 font-['Manrope'] text-sm uppercase tracking-widest text-[#E1E2E7]/60">
+            <button id="mobile-menu-btn" class="md:hidden mr-2 flex items-center text-[#E1E2E7]"><span
+                    class="material-symbols-outlined text-[20px]">menu</span></button>
+            <span>Home</span> <span class="material-symbols-outlined text-[14px]">chevron_right</span> <span
+                class="text-[#00E5FF]">System Analysis</span>
+        </div>
+        <div class="flex items-center gap-6">
+            <div class="relative group">
+                <span class="absolute inset-y-0 left-3 flex items-center text-[#E1E2E7]/40"><span
+                        class="material-symbols-outlined text-[20px]">search</span></span>
+                <input
+                    class="bg-surface-container-highest/50 border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-[#00E5FF] w-64"
+                    placeholder="Search markets..." type="text" />
+            </div>
+            <div class="flex items-center gap-4 text-[#E1E2E7]/60">
+                <button class="hover:text-[#00E5FF]"><span
+                        class="material-symbols-outlined">notifications</span></button>
+                <button class="hover:text-[#00E5FF]"><span class="material-symbols-outlined">settings</span></button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-[#E1E2E7]/20 bg-primary-container/20">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="md:ml-64 pt-16 min-h-screen grid-pattern">
+        <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+            <section
+                class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b border-outline-variant/30">
+                <div>
+                    <h2 class="text-4xl font-black font-headline tracking-tight text-on-surface">Analysis Engine</h2>
+                    <p class="text-on-surface-variant mt-2 max-w-lg">Configure parameters to run deep neural net
+                        evaluation across selected assets.</p>
+                </div>
+                <button id="analyze-btn"
+                    class="bg-primary-container text-on-primary-container px-8 py-3 rounded-xl font-headline font-extrabold flex items-center gap-3 transition-opacity hover:opacity-90 active:scale-95 shadow-[0_0_20px_rgba(0,229,255,0.15)] shadow-primary-container/20">
+                    <span class="material-symbols-outlined"
+                        style="font-variation-settings: 'FILL' 1">troubleshoot</span> Initialize Scan
+                </button>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="surface-container-high rounded-2xl p-6 border border-outline-variant/20 shadow-lg">
+                        <h3 class="font-headline font-bold text-lg mb-6 flex items-center gap-2"><span
+                                class="material-symbols-outlined text-primary">tune</span> Parameters</h3>
+
+                        <div class="space-y-5">
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Asset
+                                    Ticker</label>
+                                <div class="relative">
+                                    <input id="analyze-ticker"
+                                        class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-on-surface font-mono font-bold uppercase"
+                                        placeholder="e.g. AAPL" type="text" value="AAPL" />
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Timeframe</label>
+                                <select
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary appearance-none cursor-pointer">
+                                    <option>1 Day</option>
+                                    <option>4 Hour</option>
+                                    <option>1 Hour</option>
+                                    <option>15 Min</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Model
+                                    Type</label>
+                                <select id="analyze-model"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary appearance-none cursor-pointer">
+                                    <option value="logistic">Quantum Momentum v4</option>
+                                    <option value="random_forest">Neural Ensemble</option>
+                                    <option value="gradient_boosting">Gradient Boost</option>
+                                </select>
+                            </div>
+                            <div class="pt-4 pb-2">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label
+                                        class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Confidence
+                                        Threshold</label>
+                                    <span id="analyze-conf-label"
+                                        class="text-xs font-mono text-primary font-bold">85%</span>
+                                </div>
+                                <input id="analyze-conf-range"
+                                    class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
+                                    max="95" min="50" type="range" value="85" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="surface-container-high rounded-2xl p-6 border border-outline-variant/20 relative overflow-hidden group">
+                        <div
+                            class="absolute -right-10 -bottom-10 w-32 h-32 bg-primary/5 blur-[40px] rounded-full group-hover:bg-primary/10 transition-colors">
+                        </div>
+                        <h3 class="font-headline font-bold text-lg mb-4 text-on-surface">Data Sources</h3>
+                        <div class="space-y-3 relative z-10 text-sm">
+                            <div class="flex items-center justify-between"><span class="text-on-surface-variant">Market
+                                    Data</span> <span id="analyze-dot-market"
+                                    class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#3ce42f]"></span></div>
+                            <div class="flex items-center justify-between"><span class="text-on-surface-variant">Social
+                                    Sentiment</span> <span id="analyze-dot-social"
+                                    class="w-2 h-2 rounded-full bg-surface-container-highest border border-outline-variant"></span>
+                            </div>
+                            <div class="flex items-center justify-between"><span
+                                    class="text-on-surface-variant">On-chain Metrics</span> <span
+                                    class="w-2 h-2 rounded-full bg-surface-container-highest border border-outline-variant"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-3 space-y-6">
+                    <div
+                        class="surface-container-high rounded-2xl p-6 border border-outline-variant/20 shadow-lg min-h-[400px] flex flex-col relative">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-headline font-black text-2xl tracking-tight"><span
+                                        id="analyze-ticker-display">AAPL</span> <span id="analyze-company-display"
+                                        class="text-on-surface-variant font-normal text-lg ml-2">Apple Inc.</span></h3>
+                                <p id="analyze-return-disp"
+                                    class="text-sm text-secondary flex items-center gap-1 mt-1 font-bold">+2.45% <span
+                                        class="text-on-surface-variant font-normal text-xs ml-2">Current Session</span>
+                                </p>
+                            </div>
+                            <div class="flex gap-2 bg-surface-container-highest p-1 rounded-lg">
+                                <button
+                                    class="px-3 py-1 rounded text-xs font-bold text-on-surface-variant hover:text-on-surface">1H</button>
+                                <button
+                                    class="px-3 py-1 bg-surface rounded text-xs font-bold text-primary shadow">1D</button>
+                                <button
+                                    class="px-3 py-1 rounded text-xs font-bold text-on-surface-variant hover:text-on-surface">1W</button>
+                                <button
+                                    class="px-3 py-1 rounded text-xs font-bold text-on-surface-variant hover:text-on-surface">1M</button>
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex-1 w-full bg-surface-container rounded-xl border border-outline-variant/10 relative overflow-hidden chart-grid flex items-center justify-center">
+                            <div
+                                class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-primary/5 to-transparent border-t border-primary/20">
+                            </div>
+                            <div id="analyze-chart-loading" class="absolute inset-0 flex flex-col items-center justify-center space-y-3 hidden z-20 bg-surface-container/80">
+                                <span class="material-symbols-outlined text-4xl text-on-surface-variant animate-spin pb-2">progress_activity</span>
+                                <p class="text-on-surface-variant font-mono text-sm">Processing neural weights...</p>
+                            </div>
+                            <div id="analyze-chart-placeholder" class="absolute inset-0 flex flex-col items-center justify-center space-y-3 z-10">
+                                <span class="material-symbols-outlined text-4xl text-on-surface-variant animate-pulse pb-2" style="font-variation-settings: 'FILL' 1;">area_chart</span>
+                                <p class="text-on-surface-variant font-mono text-sm max-w-xs mx-auto text-center">Waiting for scan initialization to render real-time telemetry.</p>
+                            </div>
+                            <canvas id="analyze-price-chart" class="absolute inset-0 w-full h-full hidden" style="padding:12px 8px 8px;"></canvas>
+
+                            <div class="absolute right-4 top-4 space-y-2">
+                                <div
+                                    class="bg-surface-container-highest/80 backdrop-blur-sm border border-outline-variant/30 p-2 rounded text-[10px] font-mono text-on-surface-variant flex gap-4">
+                                    <span>VOL:</span> <span id="analyze-vol" class="text-on-surface">--</span>
+                                </div>
+                                <div
+                                    class="bg-surface-container-highest/80 backdrop-blur-sm border border-outline-variant/30 p-2 rounded text-[10px] font-mono text-on-surface-variant flex gap-4">
+                                    <span>RSI:</span> <span id="analyze-rsi" class="text-primary">--</span>
+                                </div>
+                                <div
+                                    class="bg-surface-container-highest/80 backdrop-blur-sm border border-outline-variant/30 p-2 rounded text-[10px] font-mono text-on-surface-variant flex gap-4">
+                                    <span>MACD:</span> <span id="analyze-macd" class="text-secondary">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div
+                            class="surface-container-high rounded-2xl p-6 border border-outline-variant/20 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/10 blur-[50px]"></div>
+                            <h4 class="font-headline font-bold mb-4">Signal Output</h4>
+                            <div class="flex items-center gap-6">
+                                <div
+                                    class="w-24 h-24 rounded-full border-4 border-surface-container-highest flex items-center justify-center relative">
+                                    <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
+                                        <path id="analyze-conf-ring-path" class="text-secondary"
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none" stroke="currentColor" stroke-dasharray="0, 100"
+                                            stroke-width="3"></path>
+                                    </svg>
+                                    <span id="analyze-conf-ring" class="font-headline font-black text-xl">--%</span>
+                                </div>
+                                <div class="flex-1 space-y-3">
+                                    <div id="analyze-signal-text"
+                                        class="bg-surface-container/20 text-on-surface-variant px-4 py-2 rounded-lg text-sm font-black tracking-widest border border-outline-variant/30 inline-block">
+                                        --</div>
+                                    <p id="analyze-signal-exp" class="text-xs text-on-surface-variant leading-relaxed">
+                                        Run a scan to interpret signal logic.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="surface-container-high rounded-2xl p-6 border border-outline-variant/20">
+                            <h4 class="font-headline font-bold mb-4">Risk Profile</h4>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-end mb-1"><span
+                                        class="text-xs uppercase tracking-widest text-on-surface-variant">Recommended
+                                        Stop Loss</span> <span id="analyze-sl"
+                                        class="font-mono text-on-surface">--</span></div>
+                                <div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                                    <div id="analyze-sl-bar" class="h-full bg-error w-[0%]"></div>
+                                </div>
+
+                                <div class="flex justify-between items-end mb-1 mt-4"><span
+                                        class="text-xs uppercase tracking-widest text-on-surface-variant">Take Profit
+                                        Target 1</span> <span id="analyze-tp1"
+                                        class="font-mono text-on-surface">--</span></div>
+                                <div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                                    <div id="analyze-tp1-bar" class="h-full bg-secondary w-[0%]"></div>
+                                </div>
+
+                                <div class="flex justify-between items-end mb-1 mt-4"><span
+                                        class="text-xs uppercase tracking-widest text-on-surface-variant">Take Profit
+                                        Target 2</span> <span id="analyze-tp2"
+                                        class="font-mono text-on-surface">--</span></div>
+                                <div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                                    <div id="analyze-tp2-bar" class="h-full bg-primary-fixed-dim w-[0%]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        let priceChart = null;
+        const setText = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        };
+        const setWidth = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.style.width = value;
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tickerFromQuery = urlParams.get('ticker');
+            if (tickerFromQuery) document.getElementById('analyze-ticker').value = tickerFromQuery.toUpperCase();
+
+            const confRange = document.getElementById('analyze-conf-range');
+            const confLabel = document.getElementById('analyze-conf-label');
+            confRange.addEventListener('input', (e) => { confLabel.textContent = e.target.value + '%'; });
+
+            const btn = document.getElementById('analyze-btn');
+            btn.addEventListener('click', async () => {
+                const tkr = document.getElementById('analyze-ticker').value.trim().toUpperCase();
+                if (!tkr) return toast('Error', 'Ticker required', 'error');
+
+                // UI Loading State
+                document.getElementById('analyze-chart-placeholder').classList.add('hidden');
+                document.getElementById('analyze-price-chart').classList.add('hidden');
+                document.getElementById('analyze-chart-loading').classList.remove('hidden');
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'pointer-events-none');
+
+                let scanSuccess = false;
+                try {
+                    const confThresh = parseFloat(confRange.value) / 100;
+                    const modelType = document.getElementById('analyze-model').value;
+                    const token = localStorage.getItem('token');
+                    const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+
+                    // Run analysis and chart fetch in parallel
+                    const [data, chartResp] = await Promise.all([
+                        fetch(`/api/v1/analysis/${tkr}?model_type=${modelType}&threshold=${confThresh}`, { method: 'POST', headers }).then(r => {
+                            if (!r.ok) return r.json().then(e => { throw new Error(e.detail || 'Analysis failed') });
+                            return r.json();
+                        }),
+                        fetch(`/api/v1/analysis/chart/${tkr}?period=3mo`).then(r => r.ok ? r.json() : null).catch(() => null)
+                    ]);
+
+                    // ── Populate Header ──
+                    setText('analyze-ticker-display', tkr);
+                    if (data.company_name) setText('analyze-company-display', data.company_name);
+
+                    if (data.indicators) {
+                        const r5d = data.indicators.return_5d;
+                        const r5dEl = document.getElementById('analyze-return-disp');
+                        r5dEl.innerHTML = `${fmt.pct(r5d * 100)} <span class="text-on-surface-variant font-normal text-xs ml-2">5D Approx</span>`;
+                        r5dEl.className = `text-sm flex items-center gap-1 mt-1 font-bold ${r5d >= 0 ? 'text-secondary' : 'text-error'}`;
+                        setText('analyze-vol', data.indicators.volume_spike ? 'High' : 'Norm');
+                        setText('analyze-rsi', Math.round(data.indicators.rsi) || '--');
+                        setText('analyze-macd', (data.indicators.macd > data.indicators.macd_signal) ? 'Bull' : 'Bear');
+                    }
+
+                    if (data.analysis) {
+                        const conf = data.analysis.confidence_score * 100;
+                        setText('analyze-conf-ring', conf.toFixed(0) + '%');
+                        const ringPath = document.getElementById('analyze-conf-ring-path');
+                        if (ringPath) ringPath.setAttribute('stroke-dasharray', `${conf}, 100`);
+
+                        let signalText = 'HOLD', pillClass = 'bg-surface-container/20 text-on-surface-variant border border-outline-variant/30 inline-block', ringColor = 'text-outline-variant';
+                        if (conf > 85 && data.analysis.event_type !== 'HOLD') {
+                            signalText = `STRONG ${data.analysis.event_type}`;
+                            pillClass = data.analysis.event_type === 'BUY' ? 'bg-secondary-container/20 text-secondary-container border border-secondary-container/30 inline-block' : 'bg-error-container/20 text-tertiary-fixed-dim border border-error-container/30 inline-block';
+                            ringColor = data.analysis.event_type === 'BUY' ? 'text-secondary' : 'text-error';
+                        } else if (data.analysis.event_type !== 'HOLD') {
+                            signalText = data.analysis.event_type;
+                            pillClass = data.analysis.event_type === 'BUY' ? 'bg-secondary-container/20 text-secondary-container border border-secondary-container/30 inline-block' : 'bg-error-container/20 text-tertiary-fixed-dim border border-error-container/30 inline-block';
+                            ringColor = data.analysis.event_type === 'BUY' ? 'text-secondary' : 'text-error';
+                        }
+                        const sigDisp = document.getElementById('analyze-signal-text');
+                        sigDisp.textContent = signalText;
+                        sigDisp.className = pillClass + ' px-4 py-2 rounded-lg text-sm font-black tracking-widest';
+                        if (ringPath) ringPath.setAttribute('class', ringColor);
+                        setText('analyze-signal-exp', data.analysis.explanation || 'Signal generated by AI composite logic.');
+                    }
+
+                    if (data.risk_profile) {
+                        const stopLoss = data.risk_profile.stop_loss;
+                        const takeProfit = data.risk_profile.take_profit;
+                        setText('analyze-sl', stopLoss != null ? fmt.money(stopLoss) : '--');
+                        setText('analyze-tp1', takeProfit != null ? fmt.money(takeProfit) : '--');
+                        setText('analyze-tp2', takeProfit != null ? fmt.money(takeProfit * 1.15) : '--');
+                        setWidth('analyze-sl-bar', stopLoss != null ? '15%' : '0%');
+                        setWidth('analyze-tp1-bar', takeProfit != null ? '60%' : '0%');
+                        setWidth('analyze-tp2-bar', takeProfit != null ? '85%' : '0%');
+                    }
+
+                    document.getElementById('analyze-dot-social').className = 'w-2 h-2 rounded-full ' + (data.social_sentiment ? 'bg-secondary shadow-[0_0_8px_#3ce42f]' : 'bg-surface-container-highest border border-outline-variant');
+
+                    // ── Render Chart ──
+                    if (chartResp && chartResp.prices && chartResp.prices.length > 0) {
+                        renderPriceChart(chartResp.prices, tkr);
+                    } else {
+                        document.getElementById('analyze-chart-placeholder').classList.remove('hidden');
+                        document.getElementById('analyze-chart-placeholder').querySelector('p').textContent = `Scan complete. Chart data unavailable.`;
+                    }
+
+                    toast('Success', `Analysis complete for ${tkr}`, 'success');
+                    scanSuccess = true;
+
+                } catch (e) {
+                    console.error('Analysis error:', e);
+                    toast('Analysis Failed', e.message || 'Unknown error', 'error');
+                    document.getElementById('analyze-chart-placeholder').classList.remove('hidden');
+                    document.getElementById('analyze-chart-placeholder').querySelector('p').textContent = `Scan failed: ${e.message || 'Check ticker and try again.'}` ;
+                } finally {
+                    document.getElementById('analyze-chart-loading').classList.add('hidden');
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'pointer-events-none');
+                }
+            });
+        });
+
+        function renderPriceChart(prices, ticker) {
+            const canvas = document.getElementById('analyze-price-chart');
+            const placeholder = document.getElementById('analyze-chart-placeholder');
+            placeholder.classList.add('hidden');
+            canvas.classList.remove('hidden');
+
+            const labels = prices.map(p => p.t);
+            const closes = prices.map(p => p.c);
+
+            // Compute 20-day SMA
+            const sma20 = closes.map((_, i) => {
+                if (i < 19) return null;
+                return closes.slice(i - 19, i + 1).reduce((a, b) => a + b, 0) / 20;
+            });
+
+            const isUp = closes[closes.length - 1] >= closes[0];
+            const lineColor = isUp ? '#3ce42f' : '#ffb4ab';
+            const fillColor = isUp ? 'rgba(60,228,47,0.08)' : 'rgba(255,180,171,0.08)';
+
+            if (priceChart) { priceChart.destroy(); priceChart = null; }
+
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.offsetHeight || 300);
+            gradient.addColorStop(0, isUp ? 'rgba(60,228,47,0.18)' : 'rgba(255,180,171,0.18)');
+            gradient.addColorStop(1, 'rgba(17,20,23,0)');
+
+            priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: ticker,
+                            data: closes,
+                            borderColor: lineColor,
+                            backgroundColor: gradient,
+                            borderWidth: 2,
+                            fill: true,
+                            pointRadius: 0,
+                            tension: 0.3,
+                            order: 1
+                        },
+                        {
+                            label: 'SMA 20',
+                            data: sma20,
+                            borderColor: 'rgba(0,218,243,0.6)',
+                            borderWidth: 1.5,
+                            borderDash: [4, 4],
+                            fill: false,
+                            pointRadius: 0,
+                            tension: 0.3,
+                            order: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1d2023',
+                            borderColor: 'rgba(132,147,150,0.2)',
+                            borderWidth: 1,
+                            titleColor: '#bac9cc',
+                            bodyColor: '#e1e2e7',
+                            padding: 10,
+                            callbacks: {
+                                label: ctx => ` $${ctx.parsed.y.toFixed(2)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(132,147,150,0.07)' },
+                            ticks: { color: '#849396', maxTicksLimit: 8, font: { family: 'monospace', size: 10 } }
+                        },
+                        y: {
+                            position: 'right',
+                            grid: { color: 'rgba(132,147,150,0.07)' },
+                            ticks: { color: '#849396', font: { family: 'monospace', size: 10 }, callback: v => '$'+v.toFixed(0) }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

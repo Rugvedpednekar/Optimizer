@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Optimizer - Algo Engine</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed": "#9cf0ff",
+                        "tertiary-fixed-dim": "#ffb4aa",
+                        "on-tertiary-container": "#b60009",
+                        "primary-fixed-dim": "#00daf3",
+                        "on-secondary-fixed-variant": "#005300",
+                        "surface": "#111417",
+                        "surface-container": "#1d2023",
+                        "secondary-container": "#00c705",
+                        "surface-container-low": "#191c1f",
+                        "secondary": "#3ce42f",
+                        "on-surface-variant": "#bac9cc",
+                        "background": "#111417",
+                        "on-tertiary": "#690003",
+                        "on-tertiary-fixed": "#410001",
+                        "outline": "#849396",
+                        "error": "#ffb4ab",
+                        "tertiary": "#ffe8e4",
+                        "surface-container-high": "#272a2e",
+                        "inverse-surface": "#e1e2e7",
+                        "on-primary-fixed": "#001f24",
+                        "on-primary-fixed-variant": "#004f58",
+                        "on-background": "#e1e2e7",
+                        "error-container": "#93000a",
+                        "primary-container": "#00e5ff",
+                        "surface-bright": "#37393d",
+                        "inverse-primary": "#006875",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#930005",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#323538",
+                        "surface-dim": "#111417",
+                        "tertiary-container": "#ffc2ba",
+                        "on-secondary": "#003a00",
+                        "on-surface": "#e1e2e7",
+                        "tertiary-fixed": "#ffdad5",
+                        "inverse-on-surface": "#2e3134",
+                        "secondary-fixed": "#77ff62",
+                        "primary": "#c3f5ff",
+                        "on-secondary-container": "#004b00",
+                        "outline-variant": "#3b494c",
+                        "surface-container-lowest": "#0b0e11",
+                        "on-primary-container": "#00626e",
+                        "on-secondary-fixed": "#002200",
+                        "surface-variant": "#323538",
+                        "surface-tint": "#00daf3",
+                        "secondary-fixed-dim": "#3ce42f",
+                        "on-primary": "#00363d"
+                    },
+                    fontFamily: {
+                        headline: ["Manrope"],
+                        body: ["Inter"],
+                        label: ["Inter"]
+                    },
+                    boxShadow: {
+                        cyan: "0 0 24px rgba(0, 229, 255, 0.14)",
+                        soft: "0 18px 40px rgba(0,0,0,0.18)"
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            "0%": { opacity: "0", transform: "translateY(8px)" },
+                            "100%": { opacity: "1", transform: "translateY(0)" }
+                        }
+                    },
+                    animation: {
+                        fadeUp: "fadeUp 0.25s ease-out"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111417;
+        }
+
+        .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(50, 53, 56, 0.6);
+            backdrop-filter: blur(20px);
+        }
+
+        .grid-pattern {
+            background-image: radial-gradient(rgba(132, 147, 150, 0.07) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+    </style>
+
+    <script src="/static/js/app.js"></script>
+</head>
+
+<body class="bg-surface text-on-surface selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar"
+        class="transform -translate-x-full md:translate-x-0 transition-transform duration-200 h-screen w-64 fixed left-0 top-0 border-r border-transparent bg-[#191C1F] flex flex-col py-8 px-4 font-['Manrope'] tracking-tight shadow-[40px_0_40px_rgba(0,0,0,0.04)] z-50">
+        <div class="flex justify-between items-start mb-12 px-4">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter text-[#E1E2E7]">Optimizer</h1>
+                <p class="text-[10px] uppercase tracking-[0.2em] text-[#00E5FF] font-bold">Institutional Grade AI</p>
+            </div>
+            <button id="close-sidebar-btn" class="md:hidden text-[#E1E2E7]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/">
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/analyze">
+                <span class="material-symbols-outlined">query_stats</span> Analyze
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/watchlist">
+                <span class="material-symbols-outlined">visibility</span> Watchlist
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/portfolio">
+                <span class="material-symbols-outlined">account_balance_wallet</span> Portfolio
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/backtest">
+                <span class="material-symbols-outlined">history</span> Backtest
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#00E5FF] bg-[#272A2E] border-l-2 border-[#00E5FF] font-bold"
+                href="/algo">
+                <span class="material-symbols-outlined">psychology</span> Algo Jobs
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/chat">
+                <span class="material-symbols-outlined">smart_toy</span> AI Chat
+            </a>
+        </nav>
+
+        <div class="mt-auto px-4">
+            <button class="flex items-center gap-3 w-full py-3 text-[#E1E2E7]/60 hover:text-error">
+                <span class="material-symbols-outlined">logout</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- TOPBAR -->
+    <header
+        class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] h-16 px-4 md:px-8 flex justify-between items-center bg-[#111417]/60 backdrop-blur-xl border-b border-[#E1E2E7]/10 z-40">
+        <div class="flex items-center gap-2 font-['Manrope'] text-sm uppercase tracking-widest text-[#E1E2E7]/60">
+            <button id="mobile-menu-btn" class="md:hidden mr-2 flex items-center text-[#E1E2E7]">
+                <span class="material-symbols-outlined text-[20px]">menu</span>
+            </button>
+            <span>Home</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span class="text-[#00E5FF]">Algo Engines</span>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <div class="relative group">
+                <span class="absolute inset-y-0 left-3 flex items-center text-[#E1E2E7]/40">
+                    <span class="material-symbols-outlined text-[20px]">search</span>
+                </span>
+                <input id="global-search"
+                    class="bg-surface-container-highest/50 border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-[#00E5FF] w-64"
+                    placeholder="Search algo tasks..." type="text" />
+            </div>
+
+            <div class="flex items-center gap-4 text-[#E1E2E7]/60">
+                <button class="hover:text-[#00E5FF]"><span
+                        class="material-symbols-outlined">notifications</span></button>
+                <button class="hover:text-[#00E5FF]"><span class="material-symbols-outlined">settings</span></button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-[#E1E2E7]/20 bg-primary-container/20">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="md:ml-64 pt-16 min-h-screen grid-pattern">
+        <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+
+            <!-- HERO -->
+            <section
+                class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b border-outline-variant/30">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] uppercase tracking-[0.18em] font-bold">Algo
+                            Operations</span>
+                        <span id="market-status"
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container/10 text-secondary text-[11px] font-bold">
+                            <span class="h-2 w-2 rounded-full bg-secondary"></span> Healthy
+                        </span>
+                    </div>
+
+                    <h2 class="text-4xl md:text-5xl font-black font-headline tracking-tight text-on-surface">Algorithmic
+                        Trading</h2>
+                    <p class="text-on-surface-variant mt-3 max-w-2xl text-[15px] leading-7">
+                        Deploy strategies, monitor execution health, review recent trades, and manage automated
+                        paper-trading jobs from one institutional-style control center.
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button id="refresh-all-btn"
+                        class="border border-outline-variant/30 hover:border-primary/50 text-on-surface px-4 py-3 rounded-xl font-headline font-bold flex items-center gap-2 transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">refresh</span> Refresh
+                    </button>
+                    <button id="new-algo-btn"
+                        class="bg-primary-container text-on-primary-container px-8 py-3 rounded-xl font-headline font-extrabold flex items-center gap-3 shadow-cyan transition-transform hover:scale-[1.02] active:scale-[0.98]">
+                        <span class="material-symbols-outlined">add</span> Deploy Algo
+                    </button>
+                </div>
+            </section>
+
+            <!-- KPI STRIP -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+                <div class="glass-card rounded-2xl border border-outline-variant/20 p-5 shadow-soft">
+                    <div class="text-[11px] uppercase tracking-[0.18em] text-on-surface-variant font-bold">Active Jobs
+                    </div>
+                    <div id="kpi-active-jobs" class="text-3xl font-black font-headline mt-3">0</div>
+                    <div class="text-xs text-on-surface-variant mt-2">Running sequences</div>
+                </div>
+
+                <div class="glass-card rounded-2xl border border-outline-variant/20 p-5 shadow-soft">
+                    <div class="text-[11px] uppercase tracking-[0.18em] text-on-surface-variant font-bold">Capital
+                        Allocated</div>
+                    <div id="kpi-capital" class="text-3xl font-black font-headline mt-3">$0.00</div>
+                    <div class="text-xs text-on-surface-variant mt-2">Estimated qty × last price</div>
+                </div>
+
+                <div class="glass-card rounded-2xl border border-outline-variant/20 p-5 shadow-soft">
+                    <div class="text-[11px] uppercase tracking-[0.18em] text-on-surface-variant font-bold">Today’s
+                        Executions</div>
+                    <div id="kpi-executions" class="text-3xl font-black font-headline mt-3">0</div>
+                    <div class="text-xs text-on-surface-variant mt-2">Logged actions today</div>
+                </div>
+
+                <div class="glass-card rounded-2xl border border-outline-variant/20 p-5 shadow-soft">
+                    <div class="text-[11px] uppercase tracking-[0.18em] text-on-surface-variant font-bold">Buys vs Sells
+                    </div>
+                    <div id="kpi-flow" class="text-3xl font-black font-headline mt-3">0 / 0</div>
+                    <div class="text-xs text-on-surface-variant mt-2">Execution mix</div>
+                </div>
+
+                <div class="glass-card rounded-2xl border border-outline-variant/20 p-5 shadow-soft">
+                    <div class="text-[11px] uppercase tracking-[0.18em] text-on-surface-variant font-bold">Model Health
+                    </div>
+                    <div id="kpi-health" class="text-3xl font-black font-headline mt-3 text-secondary">Stable</div>
+                    <div class="text-xs text-on-surface-variant mt-2">No critical alerts</div>
+                </div>
+            </section>
+
+            <!-- DEPLOY PANEL -->
+            <section id="algo-panel"
+                class="hidden rounded-2xl p-7 border border-primary/25 bg-surface-container shadow-cyan animate-fadeUp">
+                <div class="flex items-start justify-between gap-6 mb-7">
+                    <div>
+                        <h3 class="font-headline font-extrabold text-2xl flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">psychology</span>
+                            Configure Deployment
+                        </h3>
+                        <p class="text-sm text-on-surface-variant mt-2 max-w-2xl">
+                            Launch a new paper-trading sequence with clear scheduling and risk controls.
+                        </p>
+                    </div>
+
+                    <div class="hidden md:flex items-center gap-2 text-xs text-on-surface-variant">
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-bold">Paper
+                            Mode</span>
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container/10 text-secondary font-bold">Safe
+                            Deploy</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <!-- Strategy Setup -->
+                    <div class="space-y-5">
+                        <h4 class="text-sm uppercase tracking-[0.16em] text-on-surface-variant font-bold">Market Setup
+                        </h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Asset
+                                    Ticker</label>
+                                <input id="algo-ticker" type="text"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 mono uppercase focus:ring-1 focus:border-primary text-sm"
+                                    placeholder="AAPL">
+                            </div>
+
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Strategy
+                                    Model</label>
+                                <select id="algo-strategy"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:border-primary appearance-none cursor-pointer">
+                                    <option value="MACD Crossover">MACD Crossover</option>
+                                    <option value="ML Random Forest">ML Random Forest</option>
+                                    <option value="VWAP Reversion">VWAP Reversion</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Share
+                                    Qty</label>
+                                <input id="algo-qty" type="number" step="1" min="1"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 mono focus:ring-1 focus:border-primary text-sm"
+                                    placeholder="10">
+                            </div>
+
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Interval
+                                    (Min)</label>
+                                <input id="algo-interval" type="number" step="1" min="1"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 mono focus:ring-1 focus:border-primary text-sm"
+                                    placeholder="15">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Risk Setup -->
+                    <div class="space-y-5">
+                        <h4 class="text-sm uppercase tracking-[0.16em] text-on-surface-variant font-bold">Risk Controls
+                        </h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Mode</label>
+                                <select id="algo-mode"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:border-primary appearance-none cursor-pointer">
+                                    <option value="paper">Paper Trading</option>
+                                    <option value="live" disabled>Live Trading (coming soon)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Max
+                                    Daily Trades</label>
+                                <input id="algo-max-trades" type="number" min="1" value="5"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 mono focus:ring-1 focus:border-primary text-sm">
+                            </div>
+
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Stop
+                                    Loss %</label>
+                                <input id="algo-stop-loss" type="number" step="0.1" min="0" value="2.0"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 mono focus:ring-1 focus:border-primary text-sm">
+                            </div>
+
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Take
+                                    Profit %</label>
+                                <input id="algo-take-profit" type="number" step="0.1" min="0" value="4.0"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 mono focus:ring-1 focus:border-primary text-sm">
+                            </div>
+                        </div>
+
+                        <div class="rounded-xl border border-outline-variant/20 bg-surface-container-low p-4">
+                            <div class="text-xs uppercase tracking-[0.18em] text-on-surface-variant font-bold mb-2">
+                                Deployment Preview</div>
+                            <div id="deployment-preview" class="text-sm text-on-surface-variant leading-6">
+                                Fill the fields to preview the sequence configuration before launch.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-7 flex justify-end gap-4">
+                    <button id="algo-cancel-btn"
+                        class="text-on-surface-variant hover:text-on-surface px-6 py-2 font-bold tracking-widest uppercase text-xs">Cancel</button>
+                    <button id="algo-launch-btn"
+                        class="bg-primary text-on-primary px-8 py-3 rounded-xl font-bold tracking-widest uppercase text-xs hover:bg-primary-fixed-dim transition-colors">
+                        Start Sequence
+                    </button>
+                </div>
+            </section>
+
+            <!-- ACTIVE JOBS -->
+            <section class="space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-headline font-bold text-2xl text-on-surface">Active Sequences</h3>
+                        <p class="text-sm text-on-surface-variant mt-1">Monitor schedule, status, and allocation for all
+                            deployed strategies.</p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <select id="status-filter"
+                            class="bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-1 focus:border-primary">
+                            <option value="all">All Statuses</option>
+                            <option value="running">Running</option>
+                            <option value="stopped">Stopped</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div
+                    class="rounded-2xl overflow-hidden border border-outline-variant/20 shadow-lg overflow-x-auto bg-surface-container-low">
+                    <div class="min-w-[1100px]">
+                        <div
+                            class="bg-surface-container py-3.5 px-6 grid grid-cols-8 gap-4 text-xs uppercase tracking-widest text-on-surface-variant font-bold border-b border-outline-variant/20">
+                            <div>ID / Strategy</div>
+                            <div>Ticker</div>
+                            <div class="text-center">Interval</div>
+                            <div class="text-center">Base Qty</div>
+                            <div class="text-center">Mode</div>
+                            <div class="text-center">Status</div>
+                            <div class="text-center">Last Event</div>
+                            <div class="text-right">Actions</div>
+                        </div>
+                        <div id="jobs-list" class="divide-y divide-outline-variant/10 bg-surface-container-low">
+                            <div
+                                class="py-12 flex flex-col items-center justify-center text-on-surface-variant text-center">
+                                <span
+                                    class="material-symbols-outlined text-4xl mb-4 text-outline-variant/50">sync_disabled</span>
+                                <p>No active algo deployments.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INSIGHTS + LOGS -->
+            <section class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <!-- AI INSIGHTS -->
+                <div
+                    class="xl:col-span-1 rounded-2xl border border-outline-variant/20 bg-surface-container p-6 shadow-soft h-fit">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-headline font-bold text-xl">AI Insights</h3>
+                            <p class="text-sm text-on-surface-variant mt-1">Operational intelligence for your current
+                                algo stack.</p>
+                        </div>
+                        <span class="material-symbols-outlined text-primary">auto_awesome</span>
+                    </div>
+
+                    <div id="ai-insights" class="space-y-3">
+                        <div class="rounded-xl border border-outline-variant/20 bg-surface-container-low p-4">
+                            <div class="text-sm font-semibold text-on-surface mb-1">No recommendations yet</div>
+                            <div class="text-sm text-on-surface-variant leading-6">
+                                Deploy your first strategy or wait for execution logs to accumulate. Optimizer will then
+                                summarize activity, highlight unusual behavior, and surface operational alerts here.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LOGS -->
+                <div class="xl:col-span-2 space-y-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-headline font-bold text-2xl">Algo Execution Logs</h3>
+                            <p class="text-sm text-on-surface-variant mt-1">Latest decisions, fills, and strategy
+                                reasons across all jobs.</p>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <select id="action-filter"
+                                class="bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-1 focus:border-primary">
+                                <option value="all">All Actions</option>
+                                <option value="BOUGHT">Bought</option>
+                                <option value="SOLD">Sold</option>
+                                <option value="HOLD">Hold</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        class="rounded-2xl overflow-hidden border border-outline-variant/20 shadow-lg overflow-x-auto bg-surface-container-low">
+                        <div class="min-w-[1050px]">
+                            <div
+                                class="bg-surface-container py-3.5 px-6 grid grid-cols-7 gap-4 text-xs uppercase tracking-widest text-on-surface-variant font-bold border-b border-outline-variant/20">
+                                <div>Time</div>
+                                <div>Job ID</div>
+                                <div>Ticker</div>
+                                <div>Action</div>
+                                <div class="col-span-2">Reason</div>
+                                <div class="text-right">Price</div>
+                            </div>
+                            <div id="logs-list" class="divide-y divide-outline-variant/10 bg-surface-container-low">
+                                <div class="py-10 text-center text-sm text-on-surface-variant">No executions logged yet.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const panel = document.getElementById('algo-panel');
+            const newBtn = document.getElementById('new-algo-btn');
+            const cancelBtn = document.getElementById('algo-cancel-btn');
+            const refreshBtn = document.getElementById('refresh-all-btn');
+
+            const state = {
+                jobs: [],
+                logs: []
+            };
+
+            newBtn.addEventListener('click', () => panel.classList.remove('hidden'));
+            cancelBtn.addEventListener('click', () => panel.classList.add('hidden'));
+            refreshBtn.addEventListener('click', () => refreshAll());
+
+            ['algo-ticker', 'algo-strategy', 'algo-qty', 'algo-interval', 'algo-mode', 'algo-max-trades', 'algo-stop-loss', 'algo-take-profit']
+                .forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.addEventListener('input', updatePreview);
+                    if (el) el.addEventListener('change', updatePreview);
+                });
+
+            document.getElementById('status-filter').addEventListener('change', renderJobs);
+            document.getElementById('action-filter').addEventListener('change', renderLogs);
+
+            async function refreshAll() {
+                await Promise.all([loadJobs(), loadLogs()]);
+                updateKpis();
+                renderInsights();
+            }
+
+            function updatePreview() {
+                const ticker = (document.getElementById('algo-ticker').value || '').toUpperCase().trim();
+                const strategy = document.getElementById('algo-strategy').value || '—';
+                const qty = document.getElementById('algo-qty').value || '—';
+                const interval = document.getElementById('algo-interval').value || '—';
+                const mode = document.getElementById('algo-mode').value || 'paper';
+                const maxTrades = document.getElementById('algo-max-trades').value || '—';
+                const stopLoss = document.getElementById('algo-stop-loss').value || '—';
+                const takeProfit = document.getElementById('algo-take-profit').value || '—';
+
+                document.getElementById('deployment-preview').innerHTML = `
+          <div class="space-y-1.5">
+            <div><span class="text-on-surface font-semibold">Sequence:</span> ${ticker || '—'} / ${strategy}</div>
+            <div><span class="text-on-surface font-semibold">Schedule:</span> every ${interval} minute(s)</div>
+            <div><span class="text-on-surface font-semibold">Positioning:</span> ${qty} shares, ${mode.toUpperCase()} mode</div>
+            <div><span class="text-on-surface font-semibold">Risk:</span> max ${maxTrades} trades/day, SL ${stopLoss}%, TP ${takeProfit}%</div>
+          </div>
+        `;
+            }
+
+            async function loadJobs() {
+                try {
+                    const data = await API.get('/algo/jobs');
+                    state.jobs = Array.isArray(data) ? data : [];
+                    renderJobs();
+                } catch (e) {
+                    console.error('Jobs load fail', e);
+                    state.jobs = [];
+                    renderJobs(true);
+                }
+            }
+
+            async function loadLogs() {
+                try {
+                    const data = await API.get('/algo/log');
+                    state.logs = Array.isArray(data) ? data.sort((a, b) => new Date(b.executed_at) - new Date(a.executed_at)) : [];
+                    renderLogs();
+                } catch (e) {
+                    console.error('Logs fail', e);
+                    state.logs = [];
+                    renderLogs(true);
+                }
+            }
+
+            function renderJobs(isError = false) {
+                const jl = document.getElementById('jobs-list');
+                const filter = document.getElementById('status-filter').value;
+
+                if (isError) {
+                    jl.innerHTML = `
+            <div class="py-12 flex flex-col items-center justify-center text-on-surface-variant text-center">
+              <span class="material-symbols-outlined text-4xl mb-4 text-error/60">error</span>
+              <p>Unable to load algo jobs right now.</p>
+            </div>`;
+                    return;
+                }
+
+                let jobs = [...state.jobs];
+                if (filter === 'running') jobs = jobs.filter(j => !!j.is_active);
+                if (filter === 'stopped') jobs = jobs.filter(j => !j.is_active);
+
+                if (!jobs.length) {
+                    jl.innerHTML = `
+            <div class="py-12 flex flex-col items-center justify-center text-on-surface-variant text-center">
+              <span class="material-symbols-outlined text-4xl mb-4 text-outline-variant/50">sync_disabled</span>
+              <p>No matching algo deployments.</p>
+            </div>`;
+                    return;
+                }
+
+                jl.innerHTML = jobs.map(j => {
+                    const isActive = !!j.is_active;
+                    const statusBadge = isActive
+                        ? '<span class="bg-secondary-container/20 text-secondary border border-secondary-container/30 px-2.5 py-1 rounded text-[10px] font-bold">RUNNING</span>'
+                        : '<span class="bg-surface-container-highest text-on-surface-variant border border-outline-variant/30 px-2.5 py-1 rounded text-[10px] font-bold">STOPPED</span>';
+
+                    const actionBtn = isActive
+                        ? `<button onclick="stopJob(${j.id})" class="text-error hover:text-error/80 text-xs inline-flex items-center justify-end gap-1"><span class="material-symbols-outlined text-[14px]">stop_circle</span> Stop</button>`
+                        : `<span class="text-xs text-on-surface-variant">No actions</span>`;
+
+                    const lastEvent = lastLogForJob(j.id);
+
+                    return `
+            <div class="py-4 px-6 grid grid-cols-8 gap-4 items-center hover:bg-surface-container-high transition-colors mono text-sm">
+              <div>
+                <div class="font-bold text-on-surface">JOB-${j.id}</div>
+                <div class="text-[10px] text-on-surface-variant uppercase tracking-wider">${escapeHtml(j.strategy || 'Unknown Strategy')}</div>
+              </div>
+              <div class="font-bold text-on-surface">${escapeHtml(j.ticker || '—')}</div>
+              <div class="text-center">${Number(j.interval_minutes || 0)}m</div>
+              <div class="text-center">${Number(j.quantity || 0)}</div>
+              <div class="text-center">
+                <span class="inline-flex items-center px-2.5 py-1 rounded text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">PAPER</span>
+              </div>
+              <div class="text-center">${statusBadge}</div>
+              <div class="text-center text-xs text-on-surface-variant">${lastEvent ? fmt.datetime(lastEvent.executed_at) : '—'}</div>
+              <div class="text-right">${actionBtn}</div>
+            </div>
+          `;
+                }).join('');
+            }
+
+            function renderLogs(isError = false) {
+                const ll = document.getElementById('logs-list');
+                const filter = document.getElementById('action-filter').value;
+
+                if (isError) {
+                    ll.innerHTML = '<div class="py-10 text-center text-sm text-error">Unable to load execution logs.</div>';
+                    return;
+                }
+
+                let logs = [...state.logs];
+                if (filter !== 'all') logs = logs.filter(l => (l.action_taken || '').toUpperCase() === filter);
+
+                if (!logs.length) {
+                    ll.innerHTML = '<div class="py-10 text-center text-sm text-on-surface-variant">No executions logged yet.</div>';
+                    return;
+                }
+
+                ll.innerHTML = logs.slice(0, 60).map(log => {
+                    const action = (log.action_taken || 'HOLD').toUpperCase();
+                    const actionBadge =
+                        action === 'BOUGHT'
+                            ? '<span class="text-secondary font-bold">BOUGHT</span>'
+                            : action === 'SOLD'
+                                ? '<span class="text-error font-bold">SOLD</span>'
+                                : '<span class="text-on-surface font-bold">HOLD</span>';
+
+                    return `
+            <div class="py-3 px-6 grid grid-cols-7 gap-4 items-center hover:bg-surface-container-high transition-colors mono text-sm">
+              <div class="text-xs text-on-surface-variant">${fmt.datetime(log.executed_at)}</div>
+              <div>JOB-${log.job_id ?? '—'}</div>
+              <div class="font-bold text-on-surface">${escapeHtml(log.ticker || tickerForJob(log.job_id) || '—')}</div>
+              <div>${actionBadge}</div>
+              <div class="col-span-2 text-xs truncate text-on-surface-variant" title="${escapeAttr(log.reason || '')}">${escapeHtml(log.reason || 'No reason provided')}</div>
+              <div class="text-right">${fmt.money(log.price)}</div>
+            </div>
+          `;
+                }).join('');
+            }
+
+            function updateKpis() {
+                const jobs = state.jobs || [];
+                const logs = state.logs || [];
+
+                const activeJobs = jobs.filter(j => !!j.is_active).length;
+                const today = new Date().toDateString();
+
+                const todaysExecutions = logs.filter(l => {
+                    if (!l.executed_at) return false;
+                    return new Date(l.executed_at).toDateString() === today;
+                }).length;
+
+                const buys = logs.filter(l => (l.action_taken || '').toUpperCase() === 'BOUGHT').length;
+                const sells = logs.filter(l => (l.action_taken || '').toUpperCase() === 'SOLD').length;
+
+                const capitalAllocated = jobs.reduce((sum, j) => {
+                    const qty = Number(j.quantity || 0);
+                    const lastLog = lastLogForJob(j.id);
+                    const px = Number(lastLog?.price || 0);
+                    return sum + (qty * px);
+                }, 0);
+
+                document.getElementById('kpi-active-jobs').textContent = String(activeJobs);
+                document.getElementById('kpi-capital').textContent = fmt.money(capitalAllocated);
+                document.getElementById('kpi-executions').textContent = String(todaysExecutions);
+                document.getElementById('kpi-flow').textContent = `${buys} / ${sells}`;
+                document.getElementById('kpi-health').textContent = activeJobs > 0 ? 'Stable' : 'Idle';
+            }
+
+            function renderInsights() {
+                const box = document.getElementById('ai-insights');
+                const jobs = state.jobs || [];
+                const logs = state.logs || [];
+
+                if (!jobs.length && !logs.length) {
+                    box.innerHTML = `
+            <div class="rounded-xl border border-outline-variant/20 bg-surface-container-low p-4">
+              <div class="text-sm font-semibold text-on-surface mb-1">No recommendations yet</div>
+              <div class="text-sm text-on-surface-variant leading-6">
+                Deploy your first strategy or wait for execution logs to accumulate. Optimizer will summarize activity and highlight anomalies here.
+              </div>
+            </div>`;
+                    return;
+                }
+
+                const activeJobs = jobs.filter(j => !!j.is_active).length;
+                const mostRecent = logs[0];
+                const mostActiveJob = topJobByLogs(logs);
+                const buyCount = logs.filter(l => (l.action_taken || '').toUpperCase() === 'BOUGHT').length;
+                const sellCount = logs.filter(l => (l.action_taken || '').toUpperCase() === 'SOLD').length;
+
+                box.innerHTML = `
+          <div class="rounded-xl border border-primary/20 bg-primary/5 p-4">
+            <div class="text-sm font-semibold text-on-surface mb-1">Ops Summary</div>
+            <div class="text-sm text-on-surface-variant leading-6">
+              ${activeJobs} active sequence${activeJobs === 1 ? '' : 's'} running. Execution mix is ${buyCount} buy / ${sellCount} sell across the current log history.
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-outline-variant/20 bg-surface-container-low p-4">
+            <div class="text-sm font-semibold text-on-surface mb-1">Most Active Job</div>
+            <div class="text-sm text-on-surface-variant leading-6">
+              ${mostActiveJob ? `JOB-${mostActiveJob.jobId} has the highest execution count so far.` : 'No repeated executions detected yet.'}
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-outline-variant/20 bg-surface-container-low p-4">
+            <div class="text-sm font-semibold text-on-surface mb-1">Latest Event</div>
+            <div class="text-sm text-on-surface-variant leading-6">
+              ${mostRecent ? `${fmt.datetime(mostRecent.executed_at)} — ${escapeHtml((mostRecent.action_taken || 'HOLD').toUpperCase())} at ${fmt.money(mostRecent.price)}.` : 'No recent executions logged.'}
+            </div>
+          </div>
+        `;
+            }
+
+            function lastLogForJob(jobId) {
+                return state.logs.find(l => Number(l.job_id) === Number(jobId));
+            }
+
+            function tickerForJob(jobId) {
+                return state.jobs.find(j => Number(j.id) === Number(jobId))?.ticker;
+            }
+
+            function topJobByLogs(logs) {
+                if (!logs.length) return null;
+                const counts = {};
+                logs.forEach(l => {
+                    const id = l.job_id;
+                    if (id == null) return;
+                    counts[id] = (counts[id] || 0) + 1;
+                });
+                let best = null;
+                for (const [jobId, count] of Object.entries(counts)) {
+                    if (!best || count > best.count) best = { jobId, count };
+                }
+                return best;
+            }
+
+            function escapeHtml(str) {
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function escapeAttr(str) {
+                return escapeHtml(str).replace(/"/g, '&quot;');
+            }
+
+            window.stopJob = async function (id) {
+                if (!confirm("Stop this algo job?")) return;
+                try {
+                    await API.post(`/algo/stop/${id}`);
+                    toast('Stopped', `Job ${id} terminated`, 'success');
+                    refreshAll();
+                } catch (e) {
+                    toast('Error', e.message, 'error');
+                }
+            };
+
+            document.getElementById('algo-launch-btn').addEventListener('click', async () => {
+                const tkr = document.getElementById('algo-ticker').value.toUpperCase().trim();
+                const strat = document.getElementById('algo-strategy').value;
+                const qty = parseInt(document.getElementById('algo-qty').value, 10);
+                const mins = parseInt(document.getElementById('algo-interval').value, 10);
+
+                if (!tkr || !qty || !mins) {
+                    return toast('Warning', 'Fill all required fields', 'error');
+                }
+
+                const btn = document.getElementById('algo-launch-btn');
+                btn.disabled = true;
+                btn.textContent = 'Launching...';
+
+                try {
+                    await API.post('/algo/start', {
+                        ticker: tkr,
+                        strategy: strat,
+                        quantity: qty,
+                        interval_minutes: mins
+                    });
+
+                    toast('Success', 'Algo deployed', 'success');
+                    panel.classList.add('hidden');
+                    document.getElementById('algo-ticker').value = '';
+                    document.getElementById('algo-qty').value = '';
+                    document.getElementById('algo-interval').value = '';
+                    updatePreview();
+                    refreshAll();
+                } catch (e) {
+                    toast('Failed', e.message, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Start Sequence';
+                }
+            });
+
+            updatePreview();
+            refreshAll();
+        });
+    </script>
+</body>
+
+</html>

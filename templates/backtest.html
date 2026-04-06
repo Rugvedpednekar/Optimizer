@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Optimizer - Backtesting</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#9cf0ff", "tertiary-fixed-dim": "#ffb4aa", "on-tertiary-container": "#b60009", "primary-fixed-dim": "#00daf3", "on-secondary-fixed-variant": "#005300", "surface": "#111417", "surface-container": "#1d2023", "secondary-container": "#00c705", "surface-container-low": "#191c1f", "secondary": "#3ce42f", "on-surface-variant": "#bac9cc", "background": "#111417", "on-tertiary": "#690003", "on-tertiary-fixed": "#410001", "outline": "#849396", "error": "#ffb4ab", "tertiary": "#ffe8e4", "surface-container-high": "#272a2e", "inverse-surface": "#e1e2e7", "on-primary-fixed": "#001f24", "on-primary-fixed-variant": "#004f58", "on-background": "#e1e2e7", "error-container": "#93000a", "primary-container": "#00e5ff", "surface-bright": "#37393d", "inverse-primary": "#006875", "on-error-container": "#ffdad6", "on-tertiary-fixed-variant": "#930005", "on-error": "#690005", "surface-container-highest": "#323538", "surface-dim": "#111417", "tertiary-container": "#ffc2ba", "on-secondary": "#003a00", "on-surface": "#e1e2e7", "tertiary-fixed": "#ffdad5", "inverse-on-surface": "#2e3134", "secondary-fixed": "#77ff62", "primary": "#c3f5ff", "on-secondary-container": "#004b00", "outline-variant": "#3b494c", "surface-container-lowest": "#0b0e11", "on-primary-container": "#00626e", "on-secondary-fixed": "#002200", "surface-variant": "#323538", "surface-tint": "#00daf3", "secondary-fixed-dim": "#3ce42f", "on-primary": "#00363d"
+                    },
+                    "fontFamily": { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111417;
+        }
+
+        .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .grid-pattern {
+            background-image: radial-gradient(rgba(132, 147, 150, 0.07) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+    </style>
+    <script src="/static/js/app.js"></script>
+</head>
+
+<body class="bg-surface text-on-surface selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
+
+    <aside id="sidebar"
+        class="transform -translate-x-full md:translate-x-0 transition-transform duration-200 h-screen w-64 fixed left-0 top-0 border-r border-transparent bg-[#191C1F] flex flex-col py-8 px-4 font-['Manrope'] tracking-tight shadow-[40px_0_40px_rgba(0,0,0,0.04)] z-50">
+        <div class="flex justify-between items-start mb-12 px-4">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter text-[#E1E2E7]">Optimizer</h1>
+                <p class="text-[10px] uppercase tracking-[0.2em] text-[#00E5FF] font-bold">Institutional Grade AI</p>
+            </div>
+            <button id="close-sidebar-btn" class="md:hidden text-[#E1E2E7]"><span
+                    class="material-symbols-outlined">close</span></button>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Dashboard
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/analyze">
+                <span class="material-symbols-outlined" data-icon="query_stats">query_stats</span> Analyze
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/watchlist">
+                <span class="material-symbols-outlined" data-icon="visibility">visibility</span> Watchlist
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/portfolio">
+                <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+                Portfolio
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#00E5FF] bg-[#272A2E] border-l-2 border-[#00E5FF] font-bold"
+                href="/backtest">
+                <span class="material-symbols-outlined" data-icon="history">history</span> Backtest
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/algo">
+                <span class="material-symbols-outlined" data-icon="psychology">psychology</span> Algo Jobs
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
+                href="/chat">
+                <span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span> AI Chat
+            </a>
+        </nav>
+        <div class="mt-auto px-4"><button
+                class="flex items-center gap-3 w-full py-3 text-[#E1E2E7]/60 hover:text-error"><span
+                    class="material-symbols-outlined">logout</span> Logout</button></div>
+    </aside>
+
+    <header
+        class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] h-16 px-4 md:px-8 flex justify-between items-center bg-[#111417]/60 backdrop-blur-xl border-b border-[#E1E2E7]/10 z-40">
+        <div class="flex items-center gap-2 font-['Manrope'] text-sm uppercase tracking-widest text-[#E1E2E7]/60">
+            <button id="mobile-menu-btn" class="md:hidden mr-2 flex items-center text-[#E1E2E7]"><span
+                    class="material-symbols-outlined text-[20px]">menu</span></button>
+            <span>Home</span> <span class="material-symbols-outlined text-[14px]">chevron_right</span> <span
+                class="text-[#00E5FF]">Backtesting Simulator</span>
+        </div>
+        <div class="flex items-center gap-6">
+            <div class="relative group">
+                <span class="absolute inset-y-0 left-3 flex items-center text-[#E1E2E7]/40"><span
+                        class="material-symbols-outlined text-[20px]">search</span></span>
+                <input
+                    class="bg-surface-container-highest/50 border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-[#00E5FF] w-64"
+                    placeholder="Search parameters..." type="text" />
+            </div>
+            <div class="flex items-center gap-4 text-[#E1E2E7]/60">
+                <button class="hover:text-[#00E5FF]"><span
+                        class="material-symbols-outlined">notifications</span></button>
+                <button class="hover:text-[#00E5FF]"><span class="material-symbols-outlined">settings</span></button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-[#E1E2E7]/20 bg-primary-container/20">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="md:ml-64 pt-16 min-h-screen grid-pattern">
+        <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+
+            <section
+                class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b border-outline-variant/30">
+                <div>
+                    <h2 class="text-4xl font-black font-headline tracking-tight text-on-surface">Strategy Backtesting
+                    </h2>
+                    <p class="text-on-surface-variant mt-2 max-w-xl">Simulate AI models against historical ticker data
+                        to evaluate hypothetical performance metrics before live deployment.</p>
+                </div>
+                <button id="backtest-btn"
+                    class="bg-primary-container text-on-primary-container px-8 py-3 rounded-xl font-headline font-extrabold flex items-center gap-3 shadow-[0_0_20px_rgba(0,229,255,0.15)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                    Run Simulation
+                </button>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                <div
+                    class="lg:col-span-1 border border-outline-variant/30 rounded-2xl bg-surface-container-low p-6 space-y-6">
+                    <h3 class="font-headline font-bold text-lg flex items-center gap-2"><span
+                            class="material-symbols-outlined text-primary">data_object</span> Setup Parameters</h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Strategy
+                                Model</label>
+                            <select id="bt-model"
+                                class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary appearance-none cursor-pointer">
+                                <option value="sma_crossover">SMA Crossover</option>
+                                <option value="rsi_reversal">RSI Reversal</option>
+                                <option value="macd_crossover">MACD Crossover</option>
+                                <option value="bollinger_bounce">Bollinger Bounce</option>
+                                <option value="combined">Combined</option>
+                            </select>
+                        </div>
+                        <div class="rounded-2xl border border-outline-variant/20 bg-surface-container-high/40 p-4 space-y-3">
+                            <div class="flex items-center justify-between gap-3">
+                                <h4 id="bt-strategy-title" class="font-headline font-bold text-sm text-on-surface">SMA Crossover</h4>
+                                <span id="bt-strategy-badge" class="text-[10px] uppercase tracking-[0.2em] text-primary-fixed-dim font-bold">Trend</span>
+                            </div>
+                            <p id="bt-strategy-summary" class="text-sm text-on-surface-variant leading-relaxed">This strategy compares a fast moving average to a slower one and shifts long when short-term momentum overtakes the broader trend.</p>
+                            <div class="space-y-2 text-xs text-on-surface-variant">
+                                <p><span class="font-bold text-on-surface">How it works:</span> <span id="bt-strategy-how">Buy when SMA 20 moves above SMA 50, sell when SMA 20 drops below SMA 50.</span></p>
+                                <p><span class="font-bold text-on-surface">What it did here:</span> <span id="bt-strategy-result">Run a simulation to see how this logic behaved on the selected ticker and date range.</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Ticker
+                                Symbol</label>
+                            <input id="bt-ticker"
+                                class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-on-surface font-mono uppercase"
+                                placeholder="e.g. SPY" type="text" value="QQQ" />
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Start
+                                    Date</label>
+                                <input id="bt-start"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-2 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-on-surface"
+                                    type="date" value="2023-01-01" />
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">End
+                                    Date</label>
+                                <input id="bt-end"
+                                    class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-2 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-on-surface"
+                                    type="date" value="2024-01-01" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Initial
+                                Capital</label>
+                            <input id="bt-capital"
+                                class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-on-surface font-mono"
+                                type="number" value="100000" />
+                        </div>
+
+                        <div class="pt-4 border-t border-outline-variant/20">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative flex items-center justify-center">
+                                    <input id="bt-commissions" class="peer sr-only" type="checkbox" />
+                                    <div
+                                        class="w-10 h-6 bg-surface-container-highest rounded-full shadow-inner transition-colors peer-checked:bg-primary-fixed-dim">
+                                    </div>
+                                    <div
+                                        class="absolute left-1 top-1 bg-surface w-4 h-4 rounded-full transition-transform peer-checked:translate-x-4">
+                                    </div>
+                                </div>
+                                <span
+                                    class="text-sm font-bold text-on-surface-variant group-hover:text-on-surface">Include
+                                    Commisions / Slippage</span>
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-6">
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="surface-container-high rounded-xl p-5 border border-outline-variant/10 text-center">
+                            <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">
+                                Total Return</p>
+                            <p id="metric-ret" class="text-2xl font-headline font-black text-on-surface">--</p>
+                        </div>
+                        <div class="surface-container-high rounded-xl p-5 border border-outline-variant/10 text-center">
+                            <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Max
+                                Drawdown</p>
+                            <p id="metric-dd" class="text-2xl font-headline font-black text-on-surface">--</p>
+                        </div>
+                        <div class="surface-container-high rounded-xl p-5 border border-outline-variant/10 text-center">
+                            <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">
+                                Sharpe Ratio</p>
+                            <p id="metric-sharpe" class="text-2xl font-headline font-black text-on-surface">--</p>
+                        </div>
+                        <div class="surface-container-high rounded-xl p-5 border border-outline-variant/10 text-center">
+                            <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Win
+                                Rate</p>
+                            <p id="metric-win" class="text-2xl font-headline font-black text-on-surface">--</p>
+                        </div>
+                    </div>
+
+                    <div id="bt-chart"
+                        class="surface-container-high rounded-2xl p-6 border border-outline-variant/20 h-[400px] flex flex-col justify-center items-center text-center relative overflow-hidden">
+                        <span class="material-symbols-outlined text-6xl text-outline-variant mb-4"
+                            style="font-variation-settings: 'wght' 200;">monitoring</span>
+                        <p class="text-on-surface-variant text-sm">Equity curve will render here after simulation
+                            execution.</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let backtestChart = null;
+        let backtestDataset = null;
+        const strategyMeta = {
+            sma_crossover: {
+                title: 'SMA Crossover',
+                badge: 'Trend',
+                summary: 'This strategy follows trend direction by comparing a fast moving average with a slower baseline.',
+                how: 'Buy when the 20-day SMA rises above the 50-day SMA, and sell when the 20-day SMA falls back below it.'
+            },
+            rsi_reversal: {
+                title: 'RSI Reversal',
+                badge: 'Mean Reversion',
+                summary: 'This strategy looks for exhausted moves and tries to capture rebounds from oversold or pullbacks from overbought zones.',
+                how: 'Buy when RSI drops below 30, sell when RSI rises above 70, and otherwise stay flat.'
+            },
+            macd_crossover: {
+                title: 'MACD Crossover',
+                badge: 'Momentum',
+                summary: 'This strategy tracks momentum shifts by comparing the MACD line to its signal line.',
+                how: 'Buy when MACD crosses above its signal line and sell when MACD crosses below it.'
+            },
+            bollinger_bounce: {
+                title: 'Bollinger Bounce',
+                badge: 'Volatility',
+                summary: 'This strategy reacts to price moving outside volatility bands and looks for snapback behavior.',
+                how: 'Buy when price closes below the lower Bollinger Band and sell when price closes above the upper band.'
+            },
+            combined: {
+                title: 'Combined',
+                badge: 'Filtered',
+                summary: 'This strategy combines trend and reversal confirmation so signals only appear when multiple conditions align.',
+                how: 'Buy only when both the SMA trend is bullish and RSI is oversold. Sell only when the SMA trend is bearish and RSI is overbought.'
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('backtest-btn');
+            const modelSel = document.getElementById('bt-model');
+            const tickerInp = document.getElementById('bt-ticker');
+            const startInp = document.getElementById('bt-start');
+            const endInp = document.getElementById('bt-end');
+            const capInp = document.getElementById('bt-capital');
+
+            function updateStrategyExplanation(simResult = null) {
+                const meta = strategyMeta[modelSel.value] || strategyMeta.combined;
+                document.getElementById('bt-strategy-title').textContent = meta.title;
+                document.getElementById('bt-strategy-badge').textContent = meta.badge;
+                document.getElementById('bt-strategy-summary').textContent = meta.summary;
+                document.getElementById('bt-strategy-how').textContent = meta.how;
+
+                const resultEl = document.getElementById('bt-strategy-result');
+                if (!simResult) {
+                    resultEl.textContent = 'Run a simulation to see how this logic behaved on the selected ticker and date range.';
+                    return;
+                }
+
+                const returnText = `${simResult.metrics.total_return_pct >= 0 ? 'returned' : 'lost'} ${Math.abs(simResult.metrics.total_return_pct).toFixed(2)}%`;
+                resultEl.textContent = `On ${simResult.ticker}, this strategy ${returnText} with a ${simResult.metrics.win_rate.toFixed(0)}% win rate and ${simResult.metrics.max_drawdown_pct.toFixed(2)}% max drawdown over the selected range.`;
+            }
+
+            modelSel.addEventListener('change', () => updateStrategyExplanation());
+            updateStrategyExplanation();
+
+            btn.addEventListener('click', async () => {
+                const tkr = tickerInp.value.trim().toUpperCase();
+                if (!tkr) return toast('Error', 'Ticker required', 'error');
+
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
+
+                const reqBody = {
+                    ticker: tkr,
+                    strategy: modelSel.value,
+                    initial_capital: parseFloat(capInp.value) || 100000,
+                    start_date: startInp.value,
+                    end_date: endInp.value
+                };
+
+                try {
+                    const url = API.base + `/backtest`;
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: API.headers(),
+                        body: JSON.stringify(reqBody)
+                    });
+                    if (!res.ok) throw new Error("Backtest failed. Ensure date range is valid and ticker exists.");
+                    const data = await res.json();
+
+                    // Populate Metrics
+                    const retEl = document.getElementById('metric-ret');
+                    retEl.textContent = fmt.pct(data.metrics.total_return_pct);
+                    retEl.className = `text-2xl font-headline font-black ${data.metrics.total_return_pct >= 0 ? 'text-secondary' : 'text-error'}`;
+
+                    document.getElementById('metric-dd').textContent = fmt.pct(data.metrics.max_drawdown_pct);
+                    document.getElementById('metric-sharpe').textContent = data.metrics.sharpe_ratio.toFixed(2);
+                    document.getElementById('metric-win').textContent = data.metrics.win_rate.toFixed(0) + '%';
+
+                    if (Array.isArray(data.equity_curve) && data.equity_curve.length > 0) {
+                        renderBacktestChart(data, tkr, startInp.value, endInp.value);
+                    }
+                    updateStrategyExplanation(data);
+
+                    toast('Success', 'Simulation Complete', 'success');
+                } catch (e) {
+                    toast('Failed', e.message, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50');
+                }
+            });
+
+            // Default dates
+            const end = new Date();
+            const start = new Date();
+            start.setFullYear(end.getFullYear() - 1);
+            startInp.value = start.toISOString().split('T')[0];
+            endInp.value = end.toISOString().split('T')[0];
+        });
+
+        function renderBacktestChart(data, ticker, startDate, endDate) {
+            const chartCont = document.getElementById('bt-chart');
+            chartCont.classList.remove('flex', 'flex-col', 'justify-center', 'items-center', 'text-center');
+            chartCont.innerHTML = `
+                <div class="absolute top-4 left-6 right-6 z-10 flex flex-col gap-3 md:flex-row md:items-center md:justify-between text-xs font-mono">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <span class="flex items-center gap-2 text-secondary"><span class="w-3 h-3 rounded-full bg-secondary inline-block"></span>Equity Curve</span>
+                        <span class="flex items-center gap-2 text-primary-fixed-dim"><span class="w-3 h-3 rounded-full bg-primary-fixed-dim inline-block"></span>${ticker} Price</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 md:justify-end">
+                        <div id="bt-actual-range" class="text-on-surface-variant">${startDate} to ${endDate}</div>
+                        <div class="flex items-center gap-2" role="group" aria-label="Chart zoom controls">
+                            <button type="button" class="bt-zoom-btn px-2 py-1 rounded-md border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-primary-fixed-dim" data-zoom="in">+</button>
+                            <button type="button" class="bt-zoom-btn px-2 py-1 rounded-md border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-primary-fixed-dim" data-zoom="out">-</button>
+                            <button type="button" class="bt-zoom-btn px-2 py-1 rounded-md border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-primary-fixed-dim" data-range="1m">1M</button>
+                            <button type="button" class="bt-zoom-btn px-2 py-1 rounded-md border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-primary-fixed-dim" data-range="3m">3M</button>
+                            <button type="button" class="bt-zoom-btn px-2 py-1 rounded-md border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-primary-fixed-dim" data-range="6m">6M</button>
+                            <button type="button" class="bt-zoom-btn px-2 py-1 rounded-md border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-primary-fixed-dim" data-range="all">All</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute inset-0 p-6 pt-14 pb-6">
+                    <canvas id="bt-chart-canvas" class="w-full h-full"></canvas>
+                </div>
+            `;
+
+            backtestDataset = {
+                labels: data.equity_curve.map(point => point.date),
+                equityValues: data.equity_curve.map(point => point.value),
+                priceValues: Array.isArray(data.price_curve) ? data.price_curve.map(point => point.value) : [],
+                isPositive: data.metrics.total_return_pct >= 0,
+                ticker,
+                selectedRange: 'all'
+            };
+
+            drawBacktestChart('all');
+
+            chartCont.querySelectorAll('.bt-zoom-btn').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const range = btn.dataset.range;
+                    const zoom = btn.dataset.zoom;
+                    if (range) {
+                        backtestDataset.selectedRange = range;
+                        drawBacktestChart(range);
+                        return;
+                    }
+                    if (zoom === 'in') {
+                        const current = backtestDataset.selectedRange;
+                        const next = current === 'all' ? '6m' : current === '6m' ? '3m' : current === '3m' ? '1m' : '1m';
+                        backtestDataset.selectedRange = next;
+                        drawBacktestChart(next);
+                    }
+                    if (zoom === 'out') {
+                        const current = backtestDataset.selectedRange;
+                        const next = current === '1m' ? '3m' : current === '3m' ? '6m' : 'all';
+                        backtestDataset.selectedRange = next;
+                        drawBacktestChart(next);
+                    }
+                });
+            });
+        }
+
+        function drawBacktestChart(rangeKey) {
+            if (!backtestDataset) return;
+
+            const { labels: fullLabels, equityValues: fullEquity, priceValues: fullPrice, isPositive, ticker } = backtestDataset;
+            let pointsToShow = fullLabels.length;
+            if (rangeKey === '1m') pointsToShow = Math.min(6, fullLabels.length);
+            if (rangeKey === '3m') pointsToShow = Math.min(18, fullLabels.length);
+            if (rangeKey === '6m') pointsToShow = Math.min(36, fullLabels.length);
+
+            const labels = fullLabels.slice(-pointsToShow);
+            const equityValues = fullEquity.slice(-pointsToShow);
+            const priceValues = fullPrice.slice(-pointsToShow);
+
+            const actualRange = document.getElementById('bt-actual-range');
+            if (actualRange && labels.length > 0) {
+                actualRange.textContent = `${labels[0]} to ${labels[labels.length - 1]}`;
+            }
+
+            const canvas = document.getElementById('bt-chart-canvas');
+            const ctx = canvas.getContext('2d');
+            const equityGradient = ctx.createLinearGradient(0, 0, 0, canvas.offsetHeight || 300);
+            equityGradient.addColorStop(0, isPositive ? 'rgba(60,228,47,0.22)' : 'rgba(255,180,171,0.22)');
+            equityGradient.addColorStop(1, 'rgba(17,20,23,0)');
+
+            if (backtestChart) {
+                backtestChart.destroy();
+                backtestChart = null;
+            }
+
+            backtestChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Equity Curve',
+                            data: equityValues,
+                            borderColor: isPositive ? '#3ce42f' : '#ffb4ab',
+                            backgroundColor: equityGradient,
+                            fill: true,
+                            tension: 0.32,
+                            pointRadius: 0,
+                            borderWidth: 3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: `${ticker} Price`,
+                            data: priceValues,
+                            borderColor: '#00daf3',
+                            backgroundColor: 'transparent',
+                            fill: false,
+                            tension: 0.25,
+                            pointRadius: 0,
+                            borderWidth: 2,
+                            borderDash: [7, 5],
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1d2023',
+                            borderColor: 'rgba(132,147,150,0.2)',
+                            borderWidth: 1,
+                            titleColor: '#bac9cc',
+                            bodyColor: '#e1e2e7',
+                            padding: 12,
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${fmt.money(ctx.parsed.y)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(132,147,150,0.07)' },
+                            ticks: {
+                                color: '#849396',
+                                maxTicksLimit: 6,
+                                font: { family: 'monospace', size: 10 }
+                            }
+                        },
+                        y: {
+                            position: 'left',
+                            grid: { color: 'rgba(132,147,150,0.07)' },
+                            ticks: {
+                                color: isPositive ? '#3ce42f' : '#ffb4ab',
+                                font: { family: 'monospace', size: 10 },
+                                callback: (v) => fmt.money(v)
+                            }
+                        },
+                        y1: {
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: {
+                                color: '#00daf3',
+                                font: { family: 'monospace', size: 10 },
+                                callback: (v) => fmt.money(v)
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>
