@@ -6,25 +6,73 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Optimizer - Dashboard</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
-                    "colors": {
-                        "primary-fixed": "#9cf0ff", "tertiary-fixed-dim": "#ffb4aa", "on-tertiary-container": "#b60009", "primary-fixed-dim": "#00daf3", "on-secondary-fixed-variant": "#005300", "surface": "#111417", "surface-container": "#1d2023", "secondary-container": "#00c705", "surface-container-low": "#191c1f", "secondary": "#3ce42f", "on-surface-variant": "#bac9cc", "background": "#111417", "on-tertiary": "#690003", "on-tertiary-fixed": "#410001", "outline": "#849396", "error": "#ffb4ab", "tertiary": "#ffe8e4", "surface-container-high": "#272a2e", "inverse-surface": "#e1e2e7", "on-primary-fixed": "#001f24", "on-primary-fixed-variant": "#004f58", "on-background": "#e1e2e7", "error-container": "#93000a", "primary-container": "#00e5ff", "surface-bright": "#37393d", "inverse-primary": "#006875", "on-error-container": "#ffdad6", "on-tertiary-fixed-variant": "#930005", "on-error": "#690005", "surface-container-highest": "#323538", "surface-dim": "#111417", "tertiary-container": "#ffc2ba", "on-secondary": "#003a00", "on-surface": "#e1e2e7", "tertiary-fixed": "#ffdad5", "inverse-on-surface": "#2e3134", "secondary-fixed": "#77ff62", "primary": "#c3f5ff", "on-secondary-container": "#004b00", "outline-variant": "#3b494c", "surface-container-lowest": "#0b0e11", "on-primary-container": "#00626e", "on-secondary-fixed": "#002200", "surface-variant": "#323538", "surface-tint": "#00daf3", "secondary-fixed-dim": "#3ce42f", "on-primary": "#00363d"
+                    colors: {
+                        "primary-fixed": "#9cf0ff",
+                        "tertiary-fixed-dim": "#ffb4aa",
+                        "on-tertiary-container": "#b60009",
+                        "primary-fixed-dim": "#00daf3",
+                        "on-secondary-fixed-variant": "#005300",
+                        "surface": "#111417",
+                        "surface-container": "#1d2023",
+                        "secondary-container": "#00c705",
+                        "surface-container-low": "#191c1f",
+                        "secondary": "#3ce42f",
+                        "on-surface-variant": "#bac9cc",
+                        "background": "#111417",
+                        "on-tertiary": "#690003",
+                        "on-tertiary-fixed": "#410001",
+                        "outline": "#849396",
+                        "error": "#ffb4ab",
+                        "tertiary": "#ffe8e4",
+                        "surface-container-high": "#272a2e",
+                        "inverse-surface": "#e1e2e7",
+                        "on-primary-fixed": "#001f24",
+                        "on-primary-fixed-variant": "#004f58",
+                        "on-background": "#e1e2e7",
+                        "error-container": "#93000a",
+                        "primary-container": "#00e5ff",
+                        "surface-bright": "#37393d",
+                        "inverse-primary": "#006875",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#930005",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#323538",
+                        "surface-dim": "#111417",
+                        "tertiary-container": "#ffc2ba",
+                        "on-secondary": "#003a00",
+                        "on-surface": "#e1e2e7",
+                        "tertiary-fixed": "#ffdad5",
+                        "inverse-on-surface": "#2e3134",
+                        "secondary-fixed": "#77ff62",
+                        "primary": "#c3f5ff",
+                        "on-secondary-container": "#004b00",
+                        "outline-variant": "#3b494c",
+                        "surface-container-lowest": "#0b0e11",
+                        "on-primary-container": "#00626e",
+                        "on-secondary-fixed": "#002200",
+                        "surface-variant": "#323538",
+                        "surface-tint": "#00daf3",
+                        "secondary-fixed-dim": "#3ce42f",
+                        "on-primary": "#00363d"
                     },
-                    "fontFamily": { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
                 }
             }
         }
     </script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -44,7 +92,49 @@
             background-image: radial-gradient(rgba(132, 147, 150, 0.07) 1px, transparent 0);
             background-size: 40px 40px;
         }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            transition: all .18s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            background: #37393d;
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            right: -30px;
+            bottom: -30px;
+            width: 100px;
+            height: 100px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(0, 218, 243, 0.10), transparent 70%);
+        }
+
+        .analysis-row:hover {
+            transform: translateX(6px);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            display: inline-block;
+            background: #00daf3;
+            box-shadow: 0 0 12px rgba(0, 218, 243, .8);
+            animation: pulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: .45; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.25); }
+        }
     </style>
+
     <script src="/static/js/app.js"></script>
 </head>
 
@@ -56,117 +146,130 @@
                 <h1 class="text-2xl font-black tracking-tighter text-[#E1E2E7]">Optimizer</h1>
                 <p class="text-[10px] uppercase tracking-[0.2em] text-[#00E5FF] font-bold">Trade Smart</p>
             </div>
-            <button id="close-sidebar-btn" class="md:hidden text-[#E1E2E7]"><span
-                    class="material-symbols-outlined">close</span></button>
+            <button id="close-sidebar-btn" class="md:hidden text-[#E1E2E7]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
+
         <nav class="flex-1 space-y-1">
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#00E5FF] bg-[#272A2E] border-l-2 border-[#00E5FF] font-bold"
-                href="/">
-                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Dashboard
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#00E5FF] bg-[#272A2E] border-l-2 border-[#00E5FF] font-bold" href="/">
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
-                href="/analyze">
-                <span class="material-symbols-outlined" data-icon="query_stats">query_stats</span> Analyze
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/analyze">
+                <span class="material-symbols-outlined">query_stats</span> Analyze
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
-                href="/watchlist">
-                <span class="material-symbols-outlined" data-icon="visibility">visibility</span> Watchlist
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/watchlist">
+                <span class="material-symbols-outlined">visibility</span> Watchlist
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
-                href="/portfolio">
-                <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
-                Portfolio
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/portfolio">
+                <span class="material-symbols-outlined">account_balance_wallet</span> Portfolio
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
-                href="/backtest">
-                <span class="material-symbols-outlined" data-icon="history">history</span> Backtest
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/backtest">
+                <span class="material-symbols-outlined">history</span> Backtest
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
-                href="/algo">
-                <span class="material-symbols-outlined" data-icon="psychology">psychology</span> Algo Jobs
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/algo">
+                <span class="material-symbols-outlined">psychology</span> Algo Jobs
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]"
-                href="/chat">
-                <span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span> AI Chat
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#E1E2E7]/60 hover:text-[#E1E2E7] hover:bg-[#272A2E]" href="/chat">
+                <span class="material-symbols-outlined">smart_toy</span> AI Chat
             </a>
         </nav>
-        <div class="mt-auto px-4"><button
-                class="flex items-center gap-3 w-full py-3 text-[#E1E2E7]/60 hover:text-error"><span
-                    class="material-symbols-outlined">logout</span> Logout</button></div>
-    </aside>
-    <header
-        class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] h-16 px-4 md:px-8 flex justify-between items-center bg-[#111417]/60 backdrop-blur-xl border-b border-[#E1E2E7]/10 z-40">
-        <div class="flex items-center gap-2 font-['Manrope'] text-sm uppercase tracking-widest text-[#E1E2E7]/60">
-            <button id="mobile-menu-btn" class="md:hidden mr-2 flex items-center text-[#E1E2E7]"><span
-                    class="material-symbols-outlined text-[20px]">menu</span></button>
-            <span>Home</span> <span class="material-symbols-outlined text-[14px]">chevron_right</span> <span
-                class="text-[#00E5FF]">Dashboard</span>
+
+        <div class="mt-auto px-4">
+            <button class="flex items-center gap-3 w-full py-3 text-[#E1E2E7]/60 hover:text-error">
+                <span class="material-symbols-outlined">logout</span> Logout
+            </button>
         </div>
+    </aside>
+
+    <header class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] h-16 px-4 md:px-8 flex justify-between items-center bg-[#111417]/60 backdrop-blur-xl border-b border-[#E1E2E7]/10 z-40">
+        <div class="flex items-center gap-2 font-['Manrope'] text-sm uppercase tracking-widest text-[#E1E2E7]/60">
+            <button id="mobile-menu-btn" class="md:hidden mr-2 flex items-center text-[#E1E2E7]">
+                <span class="material-symbols-outlined text-[20px]">menu</span>
+            </button>
+            <span>Home</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span class="text-[#00E5FF]">Dashboard</span>
+        </div>
+
         <div class="flex items-center gap-6">
             <div class="relative group">
-                <span class="absolute inset-y-0 left-3 flex items-center text-[#E1E2E7]/40"><span
-                        class="material-symbols-outlined text-[20px]">search</span></span>
-                <input
-                    class="bg-surface-container-highest/50 border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-[#00E5FF] w-64"
-                    placeholder="Search markets..." type="text" />
+                <span class="absolute inset-y-0 left-3 flex items-center text-[#E1E2E7]/40">
+                    <span class="material-symbols-outlined text-[20px]">search</span>
+                </span>
+                <input class="bg-surface-container-highest/50 border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-[#00E5FF] w-64" placeholder="Search markets..." type="text" />
             </div>
+
             <div class="flex items-center gap-4 text-[#E1E2E7]/60">
-                <button class="hover:text-[#00E5FF]"><span
-                        class="material-symbols-outlined">notifications</span></button>
+                <button class="hover:text-[#00E5FF]"><span class="material-symbols-outlined">notifications</span></button>
                 <button class="hover:text-[#00E5FF]"><span class="material-symbols-outlined">settings</span></button>
-                <div class="w-8 h-8 rounded-full overflow-hidden border border-[#E1E2E7]/20 bg-primary-container/20">
-                </div>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-[#E1E2E7]/20 bg-primary-container/20"></div>
             </div>
         </div>
     </header>
 
     <main class="md:ml-64 pt-16 min-h-screen grid-pattern">
         <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-10">
+
             <section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
-                    <h2 id="dashboard-greeting"
-                        class="text-4xl font-black font-headline tracking-tight text-on-surface">Good morning, Agent
-                    </h2>
-                    <p class="text-on-surface-variant mt-2 max-w-md">The neural models have updated. You have <span
-                            id="dashboard-watchlist-count">0</span> assets in your watchlist.</p>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="pulse-dot"></span>
+                        <span class="text-[10px] uppercase tracking-[0.2em] text-[#00E5FF] font-bold">ML Engine Active</span>
+                    </div>
+                    <h2 id="dashboard-greeting" class="text-4xl font-black font-headline tracking-tight text-on-surface">Good morning, Trader</h2>
+                    <p class="text-on-surface-variant mt-2 max-w-2xl">
+                        Your models are refreshed and the dashboard is ready. You currently track
+                        <span id="dashboard-watchlist-count" class="text-on-surface font-bold">0</span> assets and have
+                        <span id="dashboard-analysis-count" class="text-on-surface font-bold">0</span> saved analyses.
+                    </p>
                 </div>
+
                 <button onclick="window.location.href='/analyze'" id="run-analysis-btn"
                     class="bg-primary-container text-on-primary-container px-8 py-4 rounded-xl font-headline font-extrabold flex items-center gap-3 hover:opacity-90 active:scale-95 transition-all cursor-pointer">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span> Run
-                    Analysis
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    Run Analysis
                 </button>
             </section>
 
-            <section class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                <div
-                    class="surface-container-high rounded-xl p-6 relative overflow-hidden group hover:bg-surface-bright">
-                    <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4">Portfolio Value
-                    </p>
+            <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
+                <div class="stat-card surface-container-high rounded-xl p-6">
+                    <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4">Portfolio Value</p>
                     <div class="space-y-1">
-                        <p id="dashboard-portfolio-value" class="text-2xl font-headline font-bold text-on-surface">$0.00
-                        </p>
-                        <p class="text-secondary text-xs flex items-center gap-1 font-bold">+0.0%</p>
+                        <p id="dashboard-portfolio-value" class="text-2xl font-headline font-bold text-on-surface">$0.00</p>
+                        <p id="dashboard-portfolio-note" class="text-secondary text-xs flex items-center gap-1 font-bold">Live total equity</p>
                     </div>
                 </div>
-                <div
-                    class="surface-container-high rounded-xl p-6 relative overflow-hidden group hover:bg-surface-bright">
+
+                <div class="stat-card surface-container-high rounded-xl p-6">
                     <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4">Cash Balance</p>
                     <div class="space-y-1">
-                        <p id="dashboard-cash-balance" class="text-2xl font-headline font-bold text-on-surface">$0.00
-                        </p>
-                        <p class="text-on-surface-variant text-xs mt-1">Liquidity Ratio</p>
+                        <p id="dashboard-cash-balance" class="text-2xl font-headline font-bold text-on-surface">$0.00</p>
+                        <p class="text-on-surface-variant text-xs mt-1">Available liquidity</p>
                     </div>
                 </div>
-                <div
-                    class="surface-container-high rounded-xl p-6 relative overflow-hidden group hover:bg-surface-bright">
-                    <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4">Open Positions
-                    </p>
+
+                <div class="stat-card surface-container-high rounded-xl p-6">
+                    <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4">Open Positions</p>
                     <div class="space-y-1">
                         <p id="dashboard-open-positions" class="text-2xl font-headline font-bold text-on-surface">0</p>
-                        <div class="flex mt-2 -space-x-2">
-                            <div class="w-5 h-5 rounded-full bg-primary-fixed-dim border border-surface"></div>
-                            <div class="w-5 h-5 rounded-full bg-secondary border border-surface"></div>
-                        </div>
+                        <p class="text-on-surface-variant text-xs mt-1">Current holdings</p>
+                    </div>
+                </div>
+
+                <div class="stat-card surface-container-high rounded-xl p-6">
+                    <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4">Watchlist</p>
+                    <div class="space-y-1">
+                        <p id="dashboard-watchlist-card-count" class="text-2xl font-headline font-bold text-on-surface">0</p>
+                        <p class="text-on-surface-variant text-xs mt-1">Tracked tickers</p>
+                    </div>
+                </div>
+
+                <div class="stat-card surface-container-high rounded-xl p-6">
+                    <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4">Saved Analyses</p>
+                    <div class="space-y-1">
+                        <p id="dashboard-saved-analyses" class="text-2xl font-headline font-bold text-on-surface">0</p>
+                        <p class="text-on-surface-variant text-xs mt-1">Model outputs saved</p>
                     </div>
                 </div>
             </section>
@@ -174,107 +277,173 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 space-y-6">
                     <div class="flex justify-between items-center px-2">
-                        <h3 class="font-headline font-bold text-xl">Recent Analyses</h3>
+                        <div>
+                            <h3 class="font-headline font-bold text-xl">Recent Analyses</h3>
+                            <p class="text-xs text-on-surface-variant mt-1">Latest ML-driven recommendations and confidence scores</p>
+                        </div>
                     </div>
+
                     <div id="dashboard-recent-analyses" class="space-y-4">
-                        <!-- Javascript will populate rows here -->
-                        <div class="text-center py-8 text-on-surface-variant"><span
-                                class="material-symbols-outlined block text-4xl mb-2 animate-spin text-outline-variant">progress_activity</span>Loading
-                            analysis...</div>
+                        <div class="text-center py-8 text-on-surface-variant">
+                            <span class="material-symbols-outlined block text-4xl mb-2 animate-spin text-outline-variant">progress_activity</span>
+                            Loading analysis...
+                        </div>
                     </div>
                 </div>
 
                 <div class="space-y-6">
-                    <div
-                        class="surface-container-high rounded-3xl p-8 relative overflow-hidden border border-outline-variant/10">
+                    <div class="surface-container-high rounded-3xl p-8 relative overflow-hidden border border-outline-variant/10">
                         <div class="absolute -right-20 -top-20 w-48 h-48 bg-primary/10 blur-[80px] rounded-full"></div>
                         <div class="relative z-10 space-y-6">
                             <div class="flex items-center gap-2">
                                 <span class="w-2 h-2 rounded-full bg-primary-fixed-dim animate-pulse"></span>
-                                <p class="text-[10px] uppercase tracking-[0.2em] font-bold text-primary">AI Signal
-                                    Center</p>
+                                <p class="text-[10px] uppercase tracking-[0.2em] font-bold text-primary">AI Signal Center</p>
                             </div>
-                            <h3 id="dashboard-ai-signal-title" class="text-2xl font-headline font-bold">Neural Core
-                                Alert</h3>
+                            <h3 id="dashboard-ai-signal-title" class="text-2xl font-headline font-bold">Neural Core Alert</h3>
                             <p id="dashboard-ai-signal-text" class="text-on-surface-variant text-sm leading-relaxed">
-                                System initialized. Waiting for pipeline signals...</p>
+                                System initialized. Waiting for pipeline signals...
+                            </p>
                         </div>
+                    </div>
+
+                    <div class="surface-container-high rounded-3xl p-8 border border-outline-variant/10">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="material-symbols-outlined text-primary">insights</span>
+                            <h3 class="font-headline font-bold text-xl">Quick Insight</h3>
+                        </div>
+                        <p id="dashboard-quick-insight" class="text-on-surface-variant text-sm leading-relaxed">
+                            Your dashboard will surface the strongest recent signal here once more analyses are available.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // 1. Fetch User Data
+            const safeArray = (data) => {
+                if (Array.isArray(data)) return data;
+                if (data && Array.isArray(data.items)) return data.items;
+                return [];
+            };
+
+            const getConfidence = (item) => {
+                const raw = item?.confidence_score ?? item?.confidence ?? 0;
+                return Number(raw) || 0;
+            };
+
+            const getAction = (item) => {
+                return item?.action || item?.signal || item?.event_type || 'HOLD';
+            };
+
+            const fmtScore = (n) => {
+                if (typeof fmt !== 'undefined' && fmt.score) return fmt.score(n);
+                return `${Math.round((Number(n) || 0) * 100)}%`;
+            };
+
+            // 1. Fetch user
             API.get('/auth/me').then(user => {
-                if (user && user.username) {
-                    const hour = new Date().getHours();
-                    const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-                    document.getElementById('dashboard-greeting').textContent = `${greeting}, ${user.username}`;
-                }
+                const name = user?.name || user?.username || 'Trader';
+                const hour = new Date().getHours();
+                const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+                document.getElementById('dashboard-greeting').textContent = `${greeting}, ${name}`;
             }).catch(e => console.error(e));
 
-            // 2. Fetch Portfolio Data
+            // 2. Fetch portfolio
             API.get('/portfolio').then(data => {
-                if (data) {
-                    const cash = data.cash_balance || 0;
-                    const openPos = data.holdings ? data.holdings.length : 0;
-                    const marketVal = data.holdings ? data.holdings.reduce((sum, h) => sum + (h.quantity * h.current_price), 0) : 0;
-                    document.getElementById('dashboard-portfolio-value').textContent = fmt.money(cash + marketVal);
-                    document.getElementById('dashboard-cash-balance').textContent = fmt.money(cash);
-                    document.getElementById('dashboard-open-positions').textContent = openPos;
-                }
+                const cash = Number(data?.cash_balance || 0);
+                const holdings = safeArray(data?.holdings);
+                const openPos = holdings.length;
+                const marketVal = holdings.reduce((sum, h) => sum + (Number(h.quantity || 0) * Number(h.current_price || 0)), 0);
+                const totalValue = cash + marketVal;
+
+                document.getElementById('dashboard-portfolio-value').textContent = fmt.money(totalValue);
+                document.getElementById('dashboard-cash-balance').textContent = fmt.money(cash);
+                document.getElementById('dashboard-open-positions').textContent = openPos;
             }).catch(e => console.error(e));
 
-            // 3. Fetch Watchlist
+            // 3. Fetch watchlist
             API.get('/watchlist').then(data => {
-                if (data && Array.isArray(data)) {
-                    const el = document.getElementById('dashboard-watchlist-count');
-                    if (el) el.textContent = data.length;
-                }
+                const items = safeArray(data);
+                document.getElementById('dashboard-watchlist-count').textContent = items.length;
+                document.getElementById('dashboard-watchlist-card-count').textContent = items.length;
             }).catch(e => console.error(e));
 
-            // 4. Fetch Analysis History
-            const renderHistory = (history) => {
+            // 4. Fetch analysis history
+            const renderHistory = (historyRaw) => {
+                const history = safeArray(historyRaw);
                 const container = document.getElementById('dashboard-recent-analyses');
+                const savedEl = document.getElementById('dashboard-saved-analyses');
+                const analysisCountEl = document.getElementById('dashboard-analysis-count');
+                savedEl.textContent = history.length;
+                analysisCountEl.textContent = history.length;
                 container.innerHTML = '';
 
-                if (!history || history.length === 0) {
-                    container.innerHTML = '<div class="text-center py-8 text-on-surface-variant">No recent analyses found.</div>';
+                if (!history.length) {
+                    document.getElementById('dashboard-ai-signal-title').textContent = 'Neural Core Alert';
+                    document.getElementById('dashboard-ai-signal-text').textContent = 'No saved analyses yet. Run your first stock analysis to populate the signal center.';
+                    document.getElementById('dashboard-quick-insight').textContent = 'Start with AAPL, NVDA, or MSFT to begin generating machine-learning trading signals.';
+                    container.innerHTML = `
+                        <div class="text-center py-10 text-on-surface-variant surface-container-high rounded-2xl border border-outline-variant/10">
+                            <span class="material-symbols-outlined block text-4xl mb-3 text-outline-variant">query_stats</span>
+                            No recent analyses found.
+                        </div>`;
                     return;
                 }
 
-                // Setup Neural Core Alert matching latest
                 const latest = history[0];
-                const latestAction = latest.action || latest.signal || 'HOLD';
-                document.getElementById('dashboard-ai-signal-title').textContent = `${latest.ticker} ${latestAction} Signal`;
-                document.getElementById('dashboard-ai-signal-text').textContent = latest.reason ||
-                    `Momentum indicating ${latestAction} action is highly recommended based on latest analysis.`;
+                const latestAction = getAction(latest);
+                const latestConf = getConfidence(latest);
 
-                // Populate recent 5
+                document.getElementById('dashboard-ai-signal-title').textContent = `${latest.ticker} ${latestAction} Signal`;
+                document.getElementById('dashboard-ai-signal-text').textContent =
+                    latest.reason ||
+                    latest.explanation ||
+                    `Latest model output suggests ${latestAction} on ${latest.ticker} with ${fmtScore(latestConf)} confidence.`;
+
+                const buyCount = history.filter(x => getAction(x) === 'BUY').length;
+                const sellCount = history.filter(x => getAction(x) === 'SELL').length;
+                const holdCount = history.filter(x => getAction(x) === 'HOLD').length;
+
+                document.getElementById('dashboard-quick-insight').textContent =
+                    `Recent signal mix: ${buyCount} BUY, ${sellCount} SELL, ${holdCount} HOLD. Highest-confidence recent setup: ${latest.ticker} at ${fmtScore(latestConf)}.`;
+
                 history.slice(0, 5).forEach(item => {
-                    const action = item.action || item.signal || 'HOLD';
-                    const confStr = typeof fmt !== 'undefined' && fmt.score ? fmt.score(item.confidence) : Math.round(item.confidence * 100) + '%';
+                    const action = getAction(item);
+                    const conf = getConfidence(item);
                     let pillClass = 'bg-surface-container/20 text-on-surface-variant border border-outline-variant';
-                    if (action === 'BUY') pillClass = 'bg-secondary-container/20 text-secondary-container border border-secondary-container/30';
+                    if (action === 'BUY') pillClass = 'bg-secondary-container/20 text-secondary border border-secondary-container/30';
                     if (action === 'SELL') pillClass = 'bg-error-container/20 text-tertiary-fixed-dim border border-error-container/30';
+                    if (action === 'HOLD') pillClass = 'bg-primary/10 text-primary border border-primary/20';
 
                     const html = `
-            <div class="glass-card rounded-2xl p-6 flex items-center justify-between group cursor-pointer transition-all hover:translate-x-2" onclick="window.location.href='/analyze?ticker=${item.ticker}'">
-                <div class="flex items-center gap-6">
-                    <div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center font-headline font-black text-on-surface shadow-inner border border-outline-variant/10">${item.ticker}</div>
-                    <div><h4 class="font-bold text-on-surface">${item.ticker} Asset</h4><p class="text-xs text-on-surface-variant">${item.strategy_name || 'Multi-Factor Signal'}</p></div>
-                </div>
-                <div class="flex items-center gap-12">
-                    <div class="hidden md:block text-right">
-                        <p class="text-xs text-on-surface-variant uppercase tracking-tighter">Confidence</p>
-                        <p class="font-headline font-bold text-primary">${confStr}</p>
-                    </div>
-                    <div class="${pillClass} px-4 py-1.5 rounded-full text-xs font-black tracking-widest">${action}</div>
-                    <button class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">chevron_right</span></button>
-                </div>
-            </div>`;
+                        <div class="analysis-row glass-card rounded-2xl p-6 flex items-center justify-between group cursor-pointer transition-all" onclick="window.location.href='/analyze?ticker=${item.ticker}'">
+                            <div class="flex items-center gap-6">
+                                <div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center font-headline font-black text-on-surface shadow-inner border border-outline-variant/10">
+                                    ${item.ticker}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-on-surface">${item.ticker} Asset</h4>
+                                    <p class="text-xs text-on-surface-variant">${item.strategy_name || 'Multi-Factor Signal'}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-8">
+                                <div class="hidden md:block text-right">
+                                    <p class="text-xs text-on-surface-variant uppercase tracking-tighter">Confidence</p>
+                                    <p class="font-headline font-bold text-primary">${fmtScore(conf)}</p>
+                                </div>
+
+                                <div class="${pillClass} px-4 py-1.5 rounded-full text-xs font-black tracking-widest">
+                                    ${action}
+                                </div>
+
+                                <button class="text-on-surface-variant hover:text-on-surface">
+                                    <span class="material-symbols-outlined">chevron_right</span>
+                                </button>
+                            </div>
+                        </div>`;
                     container.insertAdjacentHTML('beforeend', html);
                 });
             };
@@ -285,8 +454,5 @@
             });
         });
     </script>
-
-
 </body>
-
 </html>
