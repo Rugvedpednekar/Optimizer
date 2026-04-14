@@ -350,7 +350,16 @@
                         headers: API.headers(),
                         body: JSON.stringify(reqBody)
                     });
-                    if (!res.ok) throw new Error("Backtest failed. Ensure date range is valid and ticker exists.");
+                    if (!res.ok) {
+                        let detail = 'Backtest failed. Ensure date range is valid and ticker exists.';
+                        try {
+                            const err = await res.json();
+                            if (typeof err?.detail === 'string' && err.detail.trim()) {
+                                detail = err.detail;
+                            }
+                        } catch (_) {}
+                        throw new Error(detail);
+                    }
                     const data = await res.json();
 
                     // Populate Metrics
