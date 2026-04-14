@@ -12,6 +12,8 @@ def run_backtest(
 ) -> dict:
     if not start_date or not end_date:
         return {"error": "Start date and end date are required"}
+    if start_date >= end_date:
+        return {"error": "Start date must be earlier than end date"}
 
     try:
         df = yf.download(
