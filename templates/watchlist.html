@@ -1182,8 +1182,22 @@
     function ensureChart(ticker) {
       const c = document.getElementById('stockChart'),
         tip = document.getElementById('stock-tooltip');
-      if (S.chart) S.chart.remove();
-      if (S.resize) window.removeEventListener('resize', S.resize);
+      if (S.resize) {
+        window.removeEventListener('resize', S.resize);
+      }
+
+      if (S.chart) {
+        try {
+          S.chart.remove();
+        } catch (e) {
+          console.error(`Error removing previous chart for ${ticker}:`, e);
+        }
+      }
+
+      S.chart = null;
+      S.series = null;
+      S.volume = null;
+      S.resize = null;
 
       S.chart = LightweightCharts.createChart(c, {
         width: c.clientWidth,
@@ -1222,13 +1236,24 @@
           </div>`;
       });
 
-      S.resize = () => S.chart && S.chart.applyOptions({ width: c.clientWidth, height: window.innerWidth < 768 ? 260 : 380 });
+      S.resize = () => {
+        if (!S.chart) return;
+        S.chart.applyOptions({ width: c.clientWidth, height: window.innerWidth < 768 ? 260 : 380 });
+      };
       window.addEventListener('resize', S.resize);
     }
 
     function applyChartData() {
-      if (!S.chart) return;
-      if (S.series) S.chart.removeSeries(S.series);
+      if (!S.chart || !Array.isArray(S.data) || !S.data.length) return;
+      if (S.series) {
+        try {
+          S.chart.removeSeries(S.series);
+        } catch (e) {
+          console.error('Failed to remove previous price series:', e);
+        } finally {
+          S.series = null;
+        }
+      }
 
       S.series = S.chartType === 'line'
         ? S.chart.addLineSeries({ color: '#00daf3', lineWidth: 2 })
@@ -1241,14 +1266,33 @@
             wickDownColor: '#f87171'
           });
 
-      if (S.chartType === 'line') S.series.setData(S.data.map(d => ({ time: d.time, value: d.close })));
-      else S.series.setData(S.data.map(d => ({ time: d.time, open: d.open, high: d.high, low: d.low, close: d.close })));
+      if (S.chartType === 'line') {
+        S.series.setData(S.data.map(d => ({ time: d.time, value: Number(d.close || 0) })));
+      } else {
+        S.series.setData(S.data.map(d => ({
+          time: d.time,
+          open: Number(d.open || 0),
+          high: Number(d.high || 0),
+          low: Number(d.low || 0),
+          close: Number(d.close || 0)
+        })));
+      }
 
-      S.volume.setData(S.data.map(d => ({
-        time: d.time,
-        value: d.volume,
-        color: d.close >= d.open ? 'rgba(52,211,153,0.35)' : 'rgba(248,113,113,0.35)'
-      })));
+      if (S.volume) {
+        S.volume.setData(
+          S.data
+            .filter(d => d && d.volume !== undefined && d.volume !== null)
+            .map(d => {
+              const open = Number(d.open || d.close || 0);
+              const close = Number(d.close || 0);
+              return {
+                time: d.time,
+                value: Number(d.volume || 0),
+                color: close >= open ? 'rgba(52,211,153,0.35)' : 'rgba(248,113,113,0.35)'
+              };
+            })
+        );
+      }
 
       S.chart.timeScale().fitContent();
     }
@@ -1465,7 +1509,8 @@
         updateHeader(snapshot);
         startAuto();
         if (window.innerWidth < 768) mdOpen(true);
-      } catch {
+      } catch (error) {
+        console.error(`Failed to load ${t} detail view:`, error);
         document.getElementById('stock-detail').innerHTML = `<div class="p-6 text-sm text-error">Failed to load ${t} detail view.</div>`;
       }
     }
